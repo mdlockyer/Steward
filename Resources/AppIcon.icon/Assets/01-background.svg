@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Layer 1 / bottom: background field only.
+  Solid squircle at canvas extent. No gradient here — apply the Swift orange
+  gradient inside Icon Composer so per-appearance tuning works.
+  The squircle shape is what Icon Composer will clip the icon to.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect x="0" y="0" width="1024" height="1024" rx="229" ry="229" fill="#ffffff"/>
+</svg>

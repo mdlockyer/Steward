@@ -28,7 +28,7 @@ make build
 Output:
 
 ```bash
-build/app/SwiftUITemplate.app
+Build/app/SwiftUITemplate.app
 ```
 
 ### Build and launch
@@ -47,7 +47,7 @@ BUNDLE_IDENTIFIER=com.example.MyApp \
 MIN_SYSTEM_VERSION=15.0 \
 VERSION=1.0 \
 BUILD=1 \
-./build-app.sh
+./Scripts/build-app.sh
 ```
 
 ## Notes

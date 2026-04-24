@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Layer 2: tilted inner frame, as a FILLED ring.
+
+  Geometry, derived from the original stroked design and thickened:
+    - Original stroked rect: 760×760, corner radius 170, stroke width 28.
+    - New ring stroke width: 44 (heavier to read against the asterisk at 62).
+    - Outer rect: 760+44 = 804×804, corner radius 170+22 = 192.
+    - Inner rect: 760-44 = 716×716, corner radius 170-22 = 148.
+    - Tilt: 15° (unchanged).
+    - fill-rule: evenodd so the inner path subtracts from the outer,
+      producing a hollow ring.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"
+     fill-rule="evenodd">
+  <g transform="translate(512 512) rotate(15)" fill="#ffffff">
+    <path d="
+      M -210,-402
+      L 210,-402
+      a 192,192 0 0,1 192,192
+      L 402,210
+      a 192,192 0 0,1 -192,192
+      L -210,402
+      a 192,192 0 0,1 -192,-192
+      L -402,-210
+      a 192,192 0 0,1 192,-192
+      Z
+      M -210,-358
+      a 148,148 0 0,0 -148,148
+      L -358,210
+      a 148,148 0 0,0 148,148
+      L 210,358
+      a 148,148 0 0,0 148,-148
+      L 358,-210
+      a 148,148 0 0,0 -148,-148
+      Z
+    "/>
+  </g>
+</svg>
