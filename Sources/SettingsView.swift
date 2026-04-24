@@ -60,7 +60,7 @@ struct SettingsView: View {
         .windowFullScreenBehavior(.disabled)
     }
 
-    private var settingsDivider: some View {
+    var settingsDivider: some View {
         Divider()
             .padding(.leading, 160)
             .padding(.vertical, 4)
@@ -80,18 +80,24 @@ struct SettingsView: View {
         }
     }
 
-    private func title<Value: SettingsTitleProviding>(for value: Value) -> String {
+    @_transparent
+    func title(for value: some SettingsTitleProviding) -> String {
         value.title
     }
 
-    private var sortMode: Binding<SortMode> {
+    @_transparent
+    func allModeTitles() -> [String] {
+        ColorSchemeMode.allCases.map { $0.title }
+    }
+
+    var sortMode: Binding<SortMode> {
         Binding(
             get: { SortMode(rawValue: sortModeRawValue) ?? .dateEdited },
             set: { sortModeRawValue = $0.rawValue }
         )
     }
 
-    private var colorSchemeMode: Binding<ColorSchemeMode> {
+    var colorSchemeMode: Binding<ColorSchemeMode> {
         Binding(
             get: { ColorSchemeMode(rawValue: colorSchemeModeRawValue) ?? .system },
             set: { colorSchemeModeRawValue = $0.rawValue }
@@ -99,11 +105,11 @@ struct SettingsView: View {
     }
 }
 
-private protocol SettingsTitleProviding {
+protocol SettingsTitleProviding {
     var title: String { get }
 }
 
-private enum SortMode: String, CaseIterable, Identifiable, SettingsTitleProviding {
+enum SortMode: String, CaseIterable, Identifiable, SettingsTitleProviding {
     case dateEdited
     case dateCreated
     case title
@@ -130,7 +136,7 @@ enum SettingsStorageKey: String {
     case useDarkBackgrounds
 }
 
-private struct SettingsToggleLabel: View {
+struct SettingsToggleLabel: View {
     let title: String
     let message: String
 
@@ -146,7 +152,7 @@ private struct SettingsToggleLabel: View {
     }
 }
 
-private struct SettingsToggleRow: View {
+struct SettingsToggleRow: View {
     let title: String
     let message: String?
     @Binding var isOn: Bool
@@ -175,7 +181,7 @@ private struct SettingsToggleRow: View {
     }
 }
 
-private struct SettingsLabeledRow<Content: View>: View {
+struct SettingsLabeledRow<Content: View>: View {
     let title: String
     @ViewBuilder let content: Content
 

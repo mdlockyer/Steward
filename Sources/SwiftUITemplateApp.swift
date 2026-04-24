@@ -150,7 +150,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
     }
 }
 
-private extension ColorSchemeMode {
+extension ColorSchemeMode {
     var nsAppearance: NSAppearance? {
         switch self {
         case .system:

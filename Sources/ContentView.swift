@@ -1,8 +1,18 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selection: Screen? = .loremIpsum
+    @State private var selection: Screen?
     @Binding var colorSchemeMode: ColorSchemeMode
+
+    init(colorSchemeMode: Binding<ColorSchemeMode>, initialSelection: Screen?) {
+        self._colorSchemeMode = colorSchemeMode
+        self._selection = State(initialValue: initialSelection)
+    }
+
+    init(colorSchemeMode: Binding<ColorSchemeMode>) {
+        self._colorSchemeMode = colorSchemeMode
+        self._selection = State(initialValue: .loremIpsum)
+    }
 
     var body: some View {
         NavigationSplitView {
@@ -42,7 +52,7 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    private var detailView: some View {
+    var detailView: some View {
         switch selection ?? .loremIpsum {
         case .loremIpsum:
             DetailScreen(
@@ -58,7 +68,15 @@ struct ContentView: View {
     }
 }
 
-private enum Screen: Hashable {
+struct TestView<Content: View>: View {
+    let content: Content
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    var body: some View { content }
+}
+
+enum Screen: Hashable {
     case loremIpsum
     case dolorSit
 }
@@ -82,7 +100,7 @@ enum ColorSchemeMode: String, CaseIterable, Hashable, Identifiable {
     }
 }
 
-private struct DetailScreen: View {
+struct DetailScreen: View {
     let title: String
     let message: String
 
