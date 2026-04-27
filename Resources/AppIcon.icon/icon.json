@@ -28,7 +28,7 @@
           ],
           "glass" : true,
           "hidden" : false,
-          "image-name" : "03-asterisk.svg",
+          "image-name" : "asterisk.svg",
           "name" : "asterisk"
         },
         {
@@ -46,7 +46,7 @@
             }
           ],
           "glass" : true,
-          "image-name" : "02-frame 3.svg",
+          "image-name" : "frame.svg",
           "name" : "frame"
         }
       ],
@@ -106,7 +106,7 @@
           ],
           "glass" : true,
           "hidden" : false,
-          "image-name" : "01-background.svg",
+          "image-name" : "background.svg",
           "name" : "background",
           "opacity" : 1
         }

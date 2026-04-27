@@ -13,7 +13,7 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"
      fill-rule="evenodd">
-  <g transform="translate(512 512) rotate(15)" fill="#ffffff">
+  <g transform="translate(512 512) rotate(15) scale(0.9)" fill="#ffffff">
     <path d="
       M -210,-402
       L 210,-402
