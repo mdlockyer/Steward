@@ -6,6 +6,11 @@ xcuserdata/
 DerivedData/
 .swiftpm/
 /Build/
+build/
+
+# XcodeGen-generated project. project.yml is the source of truth;
+# the .xcodeproj is regenerated locally via `make project`.
+SwiftUITemplate.xcodeproj/
 
 *.xcuserstate
 *.xcuserdatad

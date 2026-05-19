@@ -18,7 +18,6 @@ struct SwiftUITemplateApp: App {
     var body: some Scene {
         Window("SwiftUITemplate", id: "main") {
             ContentView(colorSchemeMode: colorSchemeMode)
-                .frame(minWidth: 640, minHeight: 420)
                 .onAppear {
                     applyColorScheme()
                 }
@@ -26,7 +25,6 @@ struct SwiftUITemplateApp: App {
                     applyColorScheme()
                 }
         }
-        .defaultSize(width: 960, height: 640)
         .commands {
             CommandGroup(replacing: .windowArrangement) {
             }
@@ -61,6 +59,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         DispatchQueue.main.async {
             self.removeEditMenu()
             self.removeUnsupportedWindowMenuItems()
+            self.configureMainWindow()
         }
     }
 
@@ -125,6 +124,15 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         }
 
         menuObservers.append(contentsOf: [addedObserver, changedObserver])
+    }
+
+    private func configureMainWindow() {
+        guard let window = NSApp.windows.first(where: { $0.canBecomeMain }) else { return }
+        window.minSize = NSSize(width: 760, height: 420)
+        if window.frame.width < 960 || window.frame.height < 640 {
+            window.setContentSize(NSSize(width: 960, height: 640))
+            window.center()
+        }
     }
 
     private func removeEditMenu() {

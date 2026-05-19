@@ -16,6 +16,9 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "SwiftUITemplate",
+            resources: [
+                .process("../Resources")
+            ],
             linkerSettings: [
                 .unsafeFlags([
                     "-Xlinker", "-sectcreate",

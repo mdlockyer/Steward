@@ -1,0 +1,157 @@
+# XcodeGen source of truth. Run `make project` (or `xcodegen generate`)
+# to regenerate SwiftUITemplate.xcodeproj after editing this file or
+# adding new files under Sources/, Resources/, or Tests/.
+#
+# This is the Xcode-native build path. The repo also keeps:
+#   * Package.swift            — drives `swift test` and any
+#                                "open the package in Xcode" workflow.
+#   * Scripts/build-app.sh     — legacy distribution-style packaging
+#     Scripts/run-app.sh         (env-var configurable APP_NAME /
+#                                BUNDLE_IDENTIFIER / VERSION / etc).
+# Neither is required by this project file — pick whichever path fits
+# the task. The XcodeGen path is the simplest for day-to-day dev.
+#
+# When bootstrapping a new app from this template, edit `name`,
+# `PRODUCT_BUNDLE_IDENTIFIER`, and the corresponding fields in
+# Sources/EmbeddedInfo.plist to rename the product.
+
+name: SwiftUITemplate
+
+options:
+  bundleIdPrefix: com.example
+  developmentLanguage: en
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+  groupSortPosition: top
+  defaultConfig: Debug
+  deploymentTarget:
+    macOS: "26.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SDKROOT: macosx
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+    PRODUCT_NAME: "$(TARGET_NAME)"
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "-"
+    DEAD_CODE_STRIPPING: YES
+    GCC_NO_COMMON_BLOCKS: YES
+    CLANG_ENABLE_OBJC_ARC: YES
+    CLANG_ENABLE_MODULES: YES
+  configs:
+    Debug:
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+      SWIFT_COMPILATION_MODE: singlefile
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+      GCC_OPTIMIZATION_LEVEL: "0"
+      GCC_PREPROCESSOR_DEFINITIONS: "DEBUG=1"
+      ONLY_ACTIVE_ARCH: YES
+      DEBUG_INFORMATION_FORMAT: dwarf
+      ENABLE_TESTABILITY: YES
+      COPY_PHASE_STRIP: NO
+      MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
+    Release:
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
+      SWIFT_COMPILATION_MODE: wholemodule
+      GCC_OPTIMIZATION_LEVEL: "s"
+      ONLY_ACTIVE_ARCH: NO
+      DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+      ENABLE_TESTABILITY: NO
+      COPY_PHASE_STRIP: YES
+      MTL_ENABLE_DEBUG_INFO: NO
+
+targets:
+
+  # The app. Builds SwiftUITemplate.app under the standard Xcode build
+  # products directory. Tests `@testable import SwiftUITemplate` against
+  # this target — that's why ENABLE_TESTABILITY is on in Debug.
+  SwiftUITemplate:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+        excludes:
+          # Lives in Sources/ for Package.swift's linker-flag path
+          # (`unsafeFlags(["-sectcreate", ... "Sources/EmbeddedInfo.plist"])`).
+          # Used by Xcode too — see INFOPLIST_FILE and OTHER_LDFLAGS
+          # below — but must not be compiled as a source file or copied
+          # as a resource.
+          - "EmbeddedInfo.plist"
+      - path: Resources
+        excludes:
+          # Consumed by Scripts/build-app.sh's env-var substitution path.
+          # Not a runtime resource — Xcode would otherwise try to copy
+          # it into the bundle.
+          - "Info.plist.template"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.SwiftUITemplate
+        PRODUCT_NAME: SwiftUITemplate
+        INFOPLIST_FILE: Sources/EmbeddedInfo.plist
+        # Tells Xcode's asset catalog compiler which icon set inside
+        # Resources/AppIcon.icon to use as the app icon. The .icon
+        # format (Icon Composer) compiles to Assets.car alongside the
+        # bundled icns variants.
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Preserves the linker hack from Package.swift — embeds
+        # EmbeddedInfo.plist into __TEXT/__info_plist so the binary acts
+        # like a real app even when launched as a raw executable (e.g.
+        # `swift run`). For Xcode .app builds the bundle-side
+        # Contents/Info.plist (set via INFOPLIST_FILE above) is the
+        # normal launch-services path; the sectcreate version is a
+        # defensive backup. If you ever verify the bundle-side copy
+        # alone is sufficient, the four OTHER_LDFLAGS lines can be
+        # dropped — but don't drop them speculatively.
+        OTHER_LDFLAGS:
+          - "-sectcreate"
+          - "__TEXT"
+          - "__info_plist"
+          - "$(SRCROOT)/Sources/EmbeddedInfo.plist"
+
+  # Swift Testing bundle (uses @Suite / @Test, not XCTest). Hosts
+  # against the SwiftUITemplate app via the target dependency so
+  # `@testable import SwiftUITemplate` resolves.
+  SwiftUITemplateTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/SwiftUITemplateTests
+    dependencies:
+      - target: SwiftUITemplate
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.SwiftUITemplateTests
+
+schemes:
+
+  # Primary scheme. Cmd-B builds the app; Cmd-R runs Debug; Cmd-U runs
+  # the tests in Debug; Product → Archive uses Release.
+  SwiftUITemplate:
+    build:
+      targets:
+        SwiftUITemplate: all
+        SwiftUITemplateTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - SwiftUITemplateTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+  # Test-only scheme — `xcodebuild -scheme Tests test` in CI or scripts.
+  Tests:
+    build:
+      targets:
+        SwiftUITemplateTests: [test]
+    test:
+      config: Debug
+      targets:
+        - SwiftUITemplateTests

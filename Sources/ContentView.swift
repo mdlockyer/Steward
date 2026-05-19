@@ -28,27 +28,27 @@ struct ContentView: View {
             .listStyle(.sidebar)
         } detail: {
             detailView
-        }
-        .toolbar {
-            ToolbarItem {
-                Picker("Appearance", selection: $colorSchemeMode) {
-                    Image(systemName: "sun.max")
-                        .tag(ColorSchemeMode.light)
-                        .accessibilityLabel("Light Appearance")
-                    Image(systemName: "moon.fill")
-                        .tag(ColorSchemeMode.dark)
-                        .accessibilityLabel("Dark Appearance")
-                    Image(systemName: "circle.lefthalf.filled")
-                        .tag(ColorSchemeMode.system)
-                        .accessibilityLabel("Inherit the system appearance")
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Picker("Appearance", selection: $colorSchemeMode) {
+                            Image(systemName: "sun.max")
+                                .tag(ColorSchemeMode.light)
+                                .accessibilityLabel("Light Appearance")
+                            Image(systemName: "moon.fill")
+                                .tag(ColorSchemeMode.dark)
+                                .accessibilityLabel("Dark Appearance")
+                            Image(systemName: "circle.lefthalf.filled")
+                                .tag(ColorSchemeMode.system)
+                                .accessibilityLabel("Inherit the system appearance")
+                        }
+                        .pickerStyle(.segmented)
+                        .glassEffect()
+                        .labelsHidden()
+                        .help("Choose the app appearance")
+                    }
                 }
-                .pickerStyle(.segmented)
-                .glassEffect()
-                .labelsHidden()
-                .help("Choose the app appearance")
-            }
+                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         }
-        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
     }
 
     @ViewBuilder
