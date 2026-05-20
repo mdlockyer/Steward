@@ -73,21 +73,19 @@ struct SettingsView: View {
         SettingsLabeledRow(rowTitle) {
             Picker(rowTitle, selection: selection) {
                 ForEach(Value.allCases) { value in
-                    Text(title(for: value)).tag(value)
+                    Text(value.title).tag(value)
                 }
             }
             .labelsHidden()
         }
     }
 
-    @_transparent
     func title(for value: some SettingsTitleProviding) -> String {
         value.title
     }
 
-    @_transparent
     func allModeTitles() -> [String] {
-        ColorSchemeMode.allCases.map { $0.title }
+        ColorSchemeMode.allCases.map(\.title)
     }
 
     var sortMode: Binding<SortMode> {

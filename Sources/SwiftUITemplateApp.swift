@@ -93,11 +93,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
     }
 
     private var windowMenu: NSMenu? {
-        if let windowsMenu = NSApp.windowsMenu {
-            return windowsMenu
-        }
-
-        return NSApp.mainMenu?.items.first(where: { $0.title == "Window" })?.submenu
+        NSApp.windowsMenu ?? NSApp.mainMenu?.items.first(where: { $0.title == "Window" })?.submenu
     }
 
     private func installWindowMenuObservers(for menu: NSMenu) {
