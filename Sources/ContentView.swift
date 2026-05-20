@@ -42,6 +42,9 @@ struct ContentView: View {
                         .help("Choose the app appearance")
                     }
                 }
+                // Must be .automatic (not .hidden): suppressing the toolbar background
+                // removes the glass material that scrollEdgeEffectStyle renders against,
+                // causing the top edge effect to silently do nothing.
                 .toolbarBackgroundVisibility(.automatic, for: .windowToolbar)
         }
     }
@@ -170,6 +173,13 @@ struct LoremIpsumScreen: View {
             }
             .padding(24)
         }
+        // Scroll-under-toolbar glass effect recipe:
+        // - scrollContentBackground + background(.clear): makes the scroll view transparent
+        //   so the toolbar's glass material is visible as content passes beneath it.
+        // - scrollEdgeEffectStyle(.soft): applies a gradient fade where content meets the top
+        //   safe area boundary. Requires toolbarBackgroundVisibility(.automatic) on the parent.
+        // - safeAreaInset bottom: registers a non-zero bottom safe area so content isn't
+        //   clipped behind any bottom bar.
         .scrollContentBackground(.hidden)
         .background(.clear)
         .scrollEdgeEffectStyle(.soft, for: .top)
@@ -232,6 +242,7 @@ struct DolorSitScreen: View {
             }
             .padding(24)
         }
+        // See LoremIpsumScreen for a full explanation of this recipe.
         .scrollContentBackground(.hidden)
         .background(.clear)
         .scrollEdgeEffectStyle(.soft, for: .top)
