@@ -4,7 +4,7 @@ import SwiftUI
 @main
 struct SwiftUITemplateApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @AppStorage(SettingsStorageKey.colorSchemeMode.rawValue) private var colorSchemeModeRawValue = ColorSchemeMode.system.rawValue
+    @AppStorage(SettingsStorageKey.colorSchemeMode.rawValue) private var colorSchemeMode: ColorSchemeMode = .system
 
     init() {
         NSWindow.allowsAutomaticWindowTabbing = false
@@ -17,11 +17,11 @@ struct SwiftUITemplateApp: App {
 
     var body: some Scene {
         Window("SwiftUITemplate", id: "main") {
-            ContentView(colorSchemeMode: colorSchemeMode)
+            ContentView(colorSchemeMode: $colorSchemeMode)
                 .onAppear {
                     applyColorScheme()
                 }
-                .onChange(of: colorSchemeMode.wrappedValue) {
+                .onChange(of: colorSchemeMode) {
                     applyColorScheme()
                 }
         }
@@ -37,14 +37,7 @@ struct SwiftUITemplateApp: App {
     }
 
     private func applyColorScheme() {
-        NSApp.appearance = colorSchemeMode.wrappedValue.nsAppearance
-    }
-
-    private var colorSchemeMode: Binding<ColorSchemeMode> {
-        Binding(
-            get: { ColorSchemeMode(rawValue: colorSchemeModeRawValue) ?? .system },
-            set: { colorSchemeModeRawValue = $0.rawValue }
-        )
+        NSApp.appearance = colorSchemeMode.nsAppearance
     }
 }
 
@@ -150,19 +143,6 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
             if titles.contains(item.title) {
                 menu.removeItem(item)
             }
-        }
-    }
-}
-
-extension ColorSchemeMode {
-    var nsAppearance: NSAppearance? {
-        switch self {
-        case .system:
-            nil
-        case .light:
-            NSAppearance(named: .aqua)
-        case .dark:
-            NSAppearance(named: .darkAqua)
         }
     }
 }

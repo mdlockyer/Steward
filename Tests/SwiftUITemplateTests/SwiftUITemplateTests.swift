@@ -213,11 +213,11 @@ struct SettingsViewTests {
     func sortModeBinding() {
         UserDefaults.standard.removeObject(forKey: SettingsStorageKey.sortMode.rawValue)
         let view = SettingsView()
-        #expect(view.sortMode.wrappedValue == .dateEdited)
-        view.sortMode.wrappedValue = .dateCreated
-        #expect(view.sortMode.wrappedValue == .dateCreated)
-        view.sortMode.wrappedValue = .title
-        #expect(view.sortMode.wrappedValue == .title)
+        #expect(view.sortMode == .dateEdited)
+        view.$sortMode.wrappedValue = .dateCreated
+        #expect(view.sortMode == .dateCreated)
+        view.$sortMode.wrappedValue = .title
+        #expect(view.sortMode == .title)
     }
 
     @Test("colorSchemeMode binding round-trip")
@@ -225,11 +225,11 @@ struct SettingsViewTests {
     func colorSchemeModeBinding() {
         UserDefaults.standard.removeObject(forKey: SettingsStorageKey.colorSchemeMode.rawValue)
         let view = SettingsView()
-        #expect(view.colorSchemeMode.wrappedValue == .system)
-        view.colorSchemeMode.wrappedValue = .light
-        #expect(view.colorSchemeMode.wrappedValue == .light)
-        view.colorSchemeMode.wrappedValue = .dark
-        #expect(view.colorSchemeMode.wrappedValue == .dark)
+        #expect(view.colorSchemeMode == .system)
+        view.$colorSchemeMode.wrappedValue = .light
+        #expect(view.colorSchemeMode == .light)
+        view.$colorSchemeMode.wrappedValue = .dark
+        #expect(view.colorSchemeMode == .dark)
     }
 
     @Test("settingsDivider renders")
@@ -244,6 +244,6 @@ struct SettingsViewTests {
     func sortModeDefaultValue() {
         UserDefaults.standard.removeObject(forKey: SettingsStorageKey.sortMode.rawValue)
         let view = SettingsView()
-        #expect(view.sortMode.wrappedValue == .dateEdited)
+        #expect(view.sortMode == .dateEdited)
     }
 }

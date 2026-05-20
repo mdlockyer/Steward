@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftUI Template Transparent Toolbar Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!--
+    @assembly-css-output
+    The final document must contain one deduplicated embedded CSS set.
+    Keep the foundation block first, then include selected module CSS blocks
+    in manifest order. Deduplicate by the data-assembly-css value.
+  -->
+  <style data-assembly-css="foundation">
+/* @assembly-css-block foundation
+   Shared tokens, base layout, typography, safe wrapping, print, and motion behavior.
+   Scope all document styling under .house-doc to prevent collisions when embedded.
+*/
+:root {
+  --font-sans: 'Inter', 'Söhne', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --page-width: 1180px;
+  --measure: 760px;
+
+  --transition-fast: 0.15s;
+  --transition-slow: 0.25s;
+}
+
+:root,
+html[data-theme="light"] {
+  --text-primary: oklch(0.27 0.025 250);
+  --text-secondary: oklch(0.49 0.012 75);
+  --text-tertiary: oklch(0.62 0.010 75);
+  --text-quaternary: oklch(0.78 0.008 75);
+
+  --bg-primary: oklch(0.984 0.006 85);
+  --bg-secondary: oklch(1 0 0);
+  --bg-tertiary: oklch(0.955 0.010 85);
+
+  --border-subtle: oklch(0.27 0.025 250 / 0.08);
+  --border-rule: oklch(0.27 0.025 250 / 0.16);
+  --border-strong: oklch(0.27 0.025 250 / 0.28);
+
+  --accent-primary: oklch(0.44 0.13 28);
+  --accent-primary-fg: oklch(0.984 0.006 85);
+  --accent-success: oklch(0.46 0.10 145);
+  --accent-warning: oklch(0.55 0.13 70);
+  --accent-danger: oklch(0.46 0.16 28);
+  --accent-note: oklch(0.45 0.06 270);
+
+  --material-surface: oklch(1 0 0);
+  --material-surface-subtle: oklch(0.27 0.025 250 / 0.04);
+  --material-surface-border: oklch(0.27 0.025 250 / 0.14);
+  --material-text-primary: oklch(0.27 0.025 250);
+  --material-text-secondary: oklch(0.49 0.012 75);
+  --material-text-tertiary: oklch(0.62 0.010 75);
+  --material-text-quaternary: oklch(0.78 0.008 75);
+
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --text-primary: oklch(0.95 0.003 285);
+  --text-secondary: oklch(0.74 0.005 285);
+  --text-tertiary: oklch(0.55 0.005 285);
+  --text-quaternary: oklch(0.38 0.005 285);
+
+  --bg-primary: oklch(0.165 0.002 285);
+  --bg-secondary: oklch(0.218 0.003 285);
+  --bg-tertiary: oklch(0.275 0.003 285);
+
+  --border-subtle: oklch(0.95 0.003 285 / 0.08);
+  --border-rule: oklch(0.95 0.003 285 / 0.16);
+  --border-strong: oklch(0.95 0.003 285 / 0.26);
+
+  --accent-primary: oklch(0.66 0.16 32);
+  --accent-primary-fg: oklch(0.165 0.002 285);
+  --accent-success: oklch(0.68 0.13 145);
+  --accent-warning: oklch(0.72 0.14 70);
+  --accent-danger: oklch(0.68 0.18 28);
+  --accent-note: oklch(0.66 0.07 270);
+
+  --material-surface: oklch(0.218 0.003 285);
+  --material-surface-subtle: oklch(0.95 0.003 285 / 0.04);
+  --material-surface-border: oklch(0.95 0.003 285 / 0.10);
+  --material-text-primary: oklch(0.95 0.003 285);
+  --material-text-secondary: oklch(0.74 0.005 285);
+  --material-text-tertiary: oklch(0.55 0.005 285);
+  --material-text-quaternary: oklch(0.38 0.005 285);
+
+  color-scheme: dark;
+}
+
+@supports not (color: oklch(0.5 0.1 30)) {
+  :root,
+  html[data-theme="light"] {
+    --text-primary: #242936;
+    --text-secondary: #746f66;
+    --text-tertiary: #969087;
+    --text-quaternary: #c5bfb5;
+    --bg-primary: #fbf8f0;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f0ebe1;
+    --border-subtle: rgba(36, 41, 54, 0.08);
+    --border-rule: rgba(36, 41, 54, 0.16);
+    --border-strong: rgba(36, 41, 54, 0.28);
+    --accent-primary: #7a2a20;
+    --accent-primary-fg: #fbf8f0;
+    --accent-success: #397a4c;
+    --accent-warning: #9a6b1d;
+    --accent-danger: #8a211d;
+    --accent-note: #5e527d;
+    --material-surface: #ffffff;
+    --material-surface-subtle: rgba(36, 41, 54, 0.04);
+    --material-surface-border: rgba(36, 41, 54, 0.14);
+    --material-text-primary: #242936;
+    --material-text-secondary: #746f66;
+    --material-text-tertiary: #969087;
+    --material-text-quaternary: #c5bfb5;
+  }
+
+  html[data-theme="dark"] {
+    --text-primary: #f1f0f4;
+    --text-secondary: #b9b7bd;
+    --text-tertiary: #85838a;
+    --text-quaternary: #5c5a62;
+    --bg-primary: #202024;
+    --bg-secondary: #2b2b30;
+    --bg-tertiary: #37373c;
+    --border-subtle: rgba(241, 240, 244, 0.08);
+    --border-rule: rgba(241, 240, 244, 0.16);
+    --border-strong: rgba(241, 240, 244, 0.26);
+    --accent-primary: #c05f45;
+    --accent-primary-fg: #202024;
+    --accent-success: #72b680;
+    --accent-warning: #c9a041;
+    --accent-danger: #c65a4f;
+    --accent-note: #a397c8;
+    --material-surface: #2b2b30;
+    --material-surface-subtle: rgba(241, 240, 244, 0.04);
+    --material-surface-border: rgba(241, 240, 244, 0.10);
+    --material-text-primary: #f1f0f4;
+    --material-text-secondary: #b9b7bd;
+    --material-text-tertiary: #85838a;
+    --material-text-quaternary: #5c5a62;
+  }
+}
+
+:root {
+  --body-bg: var(--bg-primary);
+  --body-text: var(--text-primary);
+  --body-text-muted: var(--text-secondary);
+  --body-text-subtle: var(--text-tertiary);
+  --body-text-faint: var(--text-quaternary);
+  --surface-card: var(--bg-secondary);
+  --surface-card-border: var(--border-subtle);
+  --surface-card-hover: var(--bg-tertiary);
+  --surface-inline: var(--bg-secondary);
+  --surface-inline-border: var(--border-subtle);
+  --surface-specimen: var(--material-surface);
+  --surface-specimen-subtle: var(--material-surface-subtle);
+  --surface-specimen-border: var(--material-surface-border);
+  --surface-specimen-text: var(--material-text-primary);
+  --surface-specimen-text-muted: var(--material-text-secondary);
+  --surface-specimen-text-subtle: var(--material-text-tertiary);
+  --toggle-bg: var(--bg-tertiary);
+  --toggle-border: var(--border-strong);
+  --toggle-active-bg: var(--accent-primary);
+  --toggle-active-border: var(--accent-primary);
+  --link-color: var(--accent-primary);
+  --rule-color: var(--border-rule);
+}
+
+.house-doc *,
+.house-doc *::before,
+.house-doc *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body.house-doc {
+  margin: 0;
+  background: var(--body-bg);
+  color: var(--body-text);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.6;
+  transition: background var(--transition-slow), color var(--transition-slow);
+}
+
+.house-doc .hd-page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 96px 40px 144px;
+}
+
+.house-doc h1,
+.house-doc h2,
+.house-doc h3,
+.house-doc h4,
+.house-doc p,
+.house-doc ol,
+.house-doc ul,
+.house-doc dl,
+.house-doc figure,
+.house-doc blockquote,
+.house-doc pre {
+  margin-block-start: 0;
+}
+
+.house-doc h1 {
+  font-size: clamp(36px, 4.4vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.house-doc h2 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+  margin-top: 72px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.house-doc h3 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 36px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.house-doc h4 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.house-doc .hd-section:first-child h2,
+.house-doc [data-assembly-fragment]:first-child h2 {
+  margin-top: 0;
+}
+
+.house-doc .hd-subtitle {
+  font-size: 18px;
+  color: var(--body-text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  max-width: var(--measure);
+  letter-spacing: -0.005em;
+}
+
+.house-doc .hd-meta-row {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--body-text-subtle);
+  margin-bottom: 32px;
+  letter-spacing: 0;
+}
+
+.house-doc p {
+  font-size: 15px;
+  color: var(--body-text-muted);
+  line-height: 1.65;
+  margin-bottom: 16px;
+  max-width: var(--measure);
+}
+
+.house-doc p strong,
+.house-doc li strong,
+.house-doc dd strong {
+  color: var(--body-text);
+  font-weight: 600;
+}
+
+.house-doc p,
+.house-doc td,
+.house-doc .hd-meta,
+.house-doc .hd-subtitle,
+.house-doc .hd-meta-row,
+.house-doc figcaption {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.house-doc a {
+  color: var(--link-color);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--accent-primary);
+}
+
+.house-doc a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.house-doc code {
+  font-family: var(--font-mono);
+  color: var(--body-text);
+  background: var(--surface-inline);
+  transition: background var(--transition-slow), color var(--transition-slow), border-color var(--transition-slow);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.house-doc code {
+  font-size: 13px;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+.house-doc pre {
+  font-size: 12.5px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  overflow: auto;
+  line-height: 1.6;
+  margin: 16px 0 28px;
+  max-height: 320px;
+  border: 1px solid var(--border-subtle);
+}
+
+.house-doc .hd-rule {
+  height: 1px;
+  background: var(--rule-color);
+  margin: 56px 0 0;
+  transition: background var(--transition-slow);
+}
+
+.house-doc .hd-footer-note {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+}
+
+.house-doc .hd-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0 32px;
+  font-size: 14px;
+  border-top: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-table th {
+  font-family: var(--font-mono);
+  text-align: left;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--body-text-subtle);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  padding: 12px 16px 12px 0;
+  border-bottom: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-table td {
+  padding: 12px 16px 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: top;
+  color: var(--body-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.house-doc .hd-table td:first-child {
+  font-weight: 500;
+  color: var(--body-text);
+  width: 200px;
+}
+
+.house-doc .hd-table tr:last-child td {
+  border-bottom: 1px solid var(--border-rule);
+}
+
+@media (max-width: 720px) {
+  .house-doc .hd-page {
+    padding: 64px 20px 96px;
+  }
+}
+
+@media (max-width: 640px) {
+  .house-doc .hd-table td:first-child {
+    width: 140px;
+  }
+}
+
+@media print {
+  html,
+  html[data-theme="dark"] {
+    --body-bg: #ffffff;
+    --body-text: #111111;
+    --body-text-muted: #333333;
+    --body-text-subtle: #555555;
+    --body-text-faint: #888888;
+    --surface-card: #ffffff;
+    --surface-card-border: #cccccc;
+    --surface-specimen: #fafafa;
+    --surface-specimen-border: #cccccc;
+    --border-subtle: #d8d8d8;
+    --border-rule: #b8b8b8;
+    --border-strong: #888888;
+    --rule-color: #b8b8b8;
+    --accent-primary: #6b1d1d;
+  }
+
+  body.house-doc {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  .house-doc .hd-mode-toggle {
+    display: none;
+  }
+
+  .house-doc .hd-page {
+    padding: 24px 20px;
+    max-width: none;
+  }
+
+  .house-doc h2,
+  .house-doc h3,
+  .house-doc h4 {
+    page-break-after: avoid;
+  }
+
+  .house-doc .hd-card,
+  .house-doc .hd-mockup,
+  .house-doc .hd-role-grid,
+  .house-doc .hd-metric-grid,
+  .house-doc .hd-table {
+    page-break-inside: avoid;
+  }
+
+  .house-doc pre {
+    white-space: pre-wrap;
+    max-height: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .house-doc *,
+  .house-doc *::before,
+  .house-doc *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+</style>
+
+<style data-assembly-css="component-theme-toggle">
+/* @assembly-css-block component-theme-toggle */
+.house-doc .hd-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 48px;
+  font-family: var(--font-mono);
+}
+
+.house-doc .hd-mode-toggle span {
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  text-transform: lowercase;
+}
+
+.house-doc .hd-mode-toggle .hd-toggle-hint {
+  font-size: 11px;
+  color: var(--body-text-faint);
+  margin-left: 12px;
+}
+
+.house-doc .hd-toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.house-doc .hd-toggle[aria-pressed="true"],
+.house-doc .hd-toggle.is-on {
+  background: var(--toggle-active-bg);
+  border-color: var(--toggle-active-border);
+}
+
+.house-doc .hd-toggle-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xs);
+  transition: transform var(--transition-fast);
+}
+
+.house-doc .hd-toggle[aria-pressed="true"] .hd-toggle-thumb,
+.house-doc .hd-toggle.is-on .hd-toggle-thumb {
+  transform: translateX(16px);
+  background: var(--accent-primary-fg);
+}
+</style>
+
+<style data-assembly-css="component-changelog">
+/* @assembly-css-block component-changelog */
+.house-doc .hd-changelog {
+  margin: 24px 0 32px;
+}
+
+.house-doc .hd-changelog table {
+  margin: 0;
+}
+
+.house-doc .hd-changelog td:first-child {
+  width: 110px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--body-text-subtle);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.house-doc .hd-changelog td:nth-child(2) {
+  width: 80px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--body-text-subtle);
+  letter-spacing: 0;
+}
+
+.house-doc .hd-changelog td:nth-child(3) {
+  color: var(--body-text-muted);
+  line-height: 1.55;
+}
+
+.house-doc .hd-changelog td:nth-child(3) strong {
+  color: var(--body-text);
+  font-weight: 600;
+}
+</style>
+
+<style data-assembly-css="component-callout">
+/* @assembly-css-block component-callout */
+.house-doc .hd-callout {
+  padding: 6px 0 6px 18px;
+  border-left: 2px solid var(--accent-primary);
+  font-size: 14px;
+  color: var(--body-text-muted);
+  margin: 24px 0 32px;
+  max-width: var(--measure);
+  line-height: 1.6;
+}
+
+.house-doc .hd-callout strong {
+  color: var(--body-text);
+  font-weight: 600;
+}
+
+.house-doc .hd-callout--info { border-left-color: var(--accent-note); }
+.house-doc .hd-callout--warn { border-left-color: var(--accent-warning); }
+.house-doc .hd-callout--risk { border-left-color: var(--accent-danger); }
+</style>
+
+<style data-assembly-css="component-card">
+/* @assembly-css-block component-card */
+.house-doc .hd-card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-sm);
+  padding: 18px 22px;
+  margin: 20px 0 28px;
+  transition: background var(--transition-slow), border-color var(--transition-slow), color var(--transition-slow);
+}
+
+.house-doc .hd-card h4 {
+  margin-bottom: 10px;
+}
+
+.house-doc .hd-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.house-doc .hd-card li {
+  font-size: 14px;
+  color: var(--body-text-muted);
+  padding: 4px 0 4px 18px;
+  position: relative;
+  line-height: 1.55;
+}
+
+.house-doc .hd-card li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-quaternary);
+}
+
+.house-doc .hd-card--keep li::before { background: var(--accent-success); }
+.house-doc .hd-card--drop li::before { background: var(--accent-danger); }
+.house-doc .hd-card--change li::before { background: var(--accent-warning); }
+.house-doc .hd-card--info li::before { background: var(--accent-primary); }
+.house-doc .hd-card--note li::before { background: var(--accent-note); }
+</style>
+
+<style data-assembly-css="component-mockup-swatch">
+/* @assembly-css-block component-mockup-swatch */
+.house-doc .hd-mockup {
+  background: var(--surface-specimen);
+  border: 1px solid var(--surface-specimen-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 28px 0;
+  position: relative;
+  transition: background var(--transition-slow), border-color var(--transition-slow);
+}
+
+.house-doc .hd-mock-caption {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--surface-specimen-text-muted);
+  letter-spacing: 0;
+  transition: color var(--transition-slow);
+}
+
+.house-doc .hd-mock-caption .hd-fig-num {
+  color: var(--surface-specimen-text-subtle);
+}
+
+.house-doc .hd-mock-caption .hd-caption-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--surface-specimen-border);
+  transition: background var(--transition-slow);
+}
+
+.house-doc .hd-mock-body {
+  padding: 48px 22px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.house-doc .hd-mock-body img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+}
+
+.house-doc .hd-mock-body img[src=""],
+.house-doc .hd-mock-body img:not([src]) {
+  display: none;
+}
+
+.house-doc .hd-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.house-doc .hd-swatch {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--surface-specimen-border);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.house-doc .hd-swatch-sample {
+  height: 64px;
+  border-bottom: 1px solid var(--surface-specimen-border);
+  background: var(--swatch-sample, var(--text-primary));
+}
+
+.house-doc .hd-swatch-body {
+  padding: 10px 12px 12px;
+}
+
+.house-doc .hd-swatch-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--surface-specimen-text);
+  letter-spacing: -0.005em;
+}
+
+.house-doc .hd-swatch-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--surface-specimen-text-subtle);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .house-doc .hd-swatch-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}
+</style>
+
+<style data-assembly-css="component-qa">
+/* @assembly-css-block component-qa */
+.house-doc .hd-qa {
+  margin: 20px 0 28px;
+  max-width: var(--measure);
+}
+
+.house-doc .hd-qa dt {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--body-text);
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+  line-height: 1.45;
+}
+
+.house-doc .hd-qa dt:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.house-doc .hd-qa dd {
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: 14.5px;
+  color: var(--body-text-muted);
+  line-height: 1.6;
+}
+</style>
+
+<style data-assembly-css="component-quote">
+/* @assembly-css-block component-quote */
+.house-doc .hd-quote {
+  margin: 32px 0;
+  padding: 4px 0 8px 22px;
+  border-left: 2px solid var(--border-strong);
+  max-width: var(--measure);
+}
+
+.house-doc .hd-quote p {
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: var(--body-text);
+  margin: 0;
+  max-width: none;
+}
+
+.house-doc .hd-quote cite {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  color: var(--body-text-subtle);
+  margin-top: 12px;
+  letter-spacing: 0;
+}
+</style>
+
+<style data-assembly-css="component-stat">
+/* @assembly-css-block component-stat */
+.house-doc .hd-stat {
+  margin: 28px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.house-doc .hd-stat-value {
+  font-family: var(--font-mono);
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: var(--body-text);
+}
+
+.house-doc .hd-stat-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--body-text-subtle);
+  letter-spacing: 0;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.house-doc .hd-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 32px;
+  margin: 28px 0 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-stat-row .hd-stat {
+  margin: 0;
+}
+</style>
+
+<style data-assembly-css="component-diff">
+/* @assembly-css-block component-diff */
+.house-doc .hd-diff {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  background: var(--surface-inline);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin: 16px 0 28px;
+  line-height: 1.6;
+  max-height: none;
+  overflow-x: auto;
+}
+
+.house-doc .hd-diff-line {
+  display: block;
+  color: var(--body-text-muted);
+  white-space: pre;
+}
+
+.house-doc .hd-diff-marker {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  user-select: none;
+  color: var(--body-text-subtle);
+}
+
+.house-doc .hd-diff-add { color: var(--body-text); }
+.house-doc .hd-diff-del { color: var(--body-text-subtle); }
+.house-doc .hd-diff-add .hd-diff-marker { color: var(--accent-success); font-weight: 500; }
+.house-doc .hd-diff-del .hd-diff-marker { color: var(--accent-danger); font-weight: 500; }
+</style>
+
+<style data-assembly-css="component-spec-grid">
+/* @assembly-css-block component-spec-grid */
+.house-doc .hd-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 24px 0 32px;
+}
+
+.house-doc .hd-spec-card {
+  background: transparent;
+  border: 1px solid var(--border-rule);
+  border-radius: var(--radius-sm);
+  padding: 18px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background var(--transition-slow), border-color var(--transition-slow);
+}
+
+.house-doc .hd-spec-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-strong);
+  color: var(--body-text-muted);
+  font-size: 16px;
+  transition: background var(--transition-slow), border-color var(--transition-slow), color var(--transition-slow);
+}
+
+.house-doc .hd-spec-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.25;
+  color: var(--body-text);
+}
+
+.house-doc .hd-spec-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--body-text-subtle);
+  text-align: center;
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .house-doc .hd-spec-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+</style>
+
+<style data-assembly-css="component-role-grid">
+/* @assembly-css-block component-role-grid */
+.house-doc .hd-role-grid,
+.house-doc .hd-two-up {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 20px 0 28px;
+  border: 1px solid var(--border-rule);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.house-doc .hd-role-card {
+  padding: 20px 24px;
+  border-right: 1px solid var(--border-rule);
+  background: transparent;
+}
+
+.house-doc .hd-role-card:last-child {
+  border-right: none;
+}
+
+.house-doc .hd-role-card p {
+  font-size: 13.5px;
+  max-width: none;
+  margin: 0;
+  color: var(--body-text-muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .house-doc .hd-role-grid,
+  .house-doc .hd-two-up {
+    grid-template-columns: 1fr;
+  }
+
+  .house-doc .hd-role-card {
+    border-right: none;
+    border-bottom: 1px solid var(--border-rule);
+  }
+
+  .house-doc .hd-role-card:last-child {
+    border-bottom: none;
+  }
+}
+</style>
+
+<style data-assembly-css="component-steps">
+/* @assembly-css-block component-steps */
+.house-doc .hd-steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 24px 0 32px;
+  padding: 0;
+  border-top: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-steps > li {
+  counter-increment: step;
+  padding: 16px 0 16px 56px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  font-size: 14.5px;
+  color: var(--body-text-muted);
+  line-height: 1.6;
+}
+
+.house-doc .hd-steps > li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--body-text-subtle);
+  letter-spacing: 0;
+}
+
+.house-doc .hd-steps > li:last-child {
+  border-bottom: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-steps > li > strong {
+  display: block;
+  color: var(--body-text);
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 14.5px;
+}
+</style>
+
+<style data-assembly-css="component-plate">
+/* @assembly-css-block component-plate */
+.house-doc .hd-plate {
+  margin: 24px 0 32px;
+  max-width: var(--measure);
+  padding: 0;
+}
+
+.house-doc .hd-plate img,
+.house-doc .hd-plate-placeholder {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border-rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-specimen);
+  transition: background var(--transition-slow), border-color var(--transition-slow);
+}
+
+.house-doc .hd-plate-placeholder {
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-specimen-text-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.house-doc .hd-plate figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--body-text-muted);
+  line-height: 1.55;
+}
+
+.house-doc .hd-fig-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+</style>
+
+<style data-assembly-css="component-title-block">
+/* @assembly-css-block component-title-block */
+.house-doc .hd-title-block {
+  margin-bottom: 0;
+}
+</style>
+
+<style data-assembly-css="component-references">
+/* @assembly-css-block component-references */
+.house-doc .hd-references {
+  list-style: none;
+  counter-reset: ref;
+  margin: 24px 0 32px;
+  padding: 0;
+  max-width: var(--measure);
+  border-top: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-references li {
+  counter-increment: ref;
+  position: relative;
+  padding: 12px 0 12px 40px;
+  font-size: 13.5px;
+  color: var(--body-text-muted);
+  line-height: 1.55;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.house-doc .hd-references li:last-child {
+  border-bottom: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-references li::before {
+  content: "[" counter(ref) "]";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  letter-spacing: 0;
+}
+
+.house-doc .hd-references cite {
+  color: var(--body-text);
+  font-style: normal;
+  font-weight: 500;
+}
+
+.house-doc .hd-references a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-primary);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.house-doc .hd-references a:hover {
+  text-decoration: underline;
+}
+</style>
+
+<style data-assembly-css="component-footnotes">
+/* @assembly-css-block component-footnotes */
+.house-doc .hd-fn-ref {
+  font-size: 0.7em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+.house-doc .hd-fn-ref a {
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+  text-decoration: none;
+  padding: 0 2px;
+}
+
+.house-doc .hd-fn-ref a:hover {
+  text-decoration: underline;
+}
+
+.house-doc .hd-footnotes {
+  list-style: none;
+  counter-reset: footnote;
+  margin: 24px 0 32px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--border-rule);
+  max-width: var(--measure);
+}
+
+.house-doc .hd-footnotes li {
+  counter-increment: footnote;
+  position: relative;
+  padding: 6px 0 6px 36px;
+  font-size: 13px;
+  color: var(--body-text-muted);
+  line-height: 1.55;
+}
+
+.house-doc .hd-footnotes li::before {
+  content: counter(footnote);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 24px;
+  text-align: right;
+  padding-right: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  letter-spacing: 0;
+}
+
+.house-doc .hd-fn-back {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--body-text-subtle);
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.house-doc .hd-fn-back:hover {
+  color: var(--accent-primary);
+}
+</style>
+
+<style data-assembly-css="component-glossary">
+/* @assembly-css-block component-glossary */
+.house-doc .hd-glossary {
+  margin: 24px 0 32px;
+  max-width: var(--measure);
+}
+
+.house-doc .hd-glossary dt {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--body-text);
+  margin-top: 18px;
+}
+
+.house-doc .hd-glossary dt:first-child {
+  margin-top: 0;
+}
+
+.house-doc .hd-glossary dd {
+  margin: 4px 0 0;
+  padding-left: 0;
+  font-size: 14.5px;
+  color: var(--body-text-muted);
+  line-height: 1.6;
+}
+</style>
+
+<style data-assembly-css="component-toc">
+/* @assembly-css-block component-toc */
+.house-doc .hd-toc {
+  margin: 24px 0 40px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border-rule);
+  border-bottom: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-toc .hd-toc-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  text-transform: lowercase;
+  margin-bottom: 8px;
+}
+
+.house-doc .hd-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: toc;
+  columns: 2;
+  column-gap: 40px;
+}
+
+.house-doc .hd-toc li {
+  counter-increment: toc;
+  padding: 3px 0;
+  font-size: 14px;
+  break-inside: avoid;
+}
+
+.house-doc .hd-toc li::before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  margin-right: 10px;
+}
+
+.house-doc .hd-toc a {
+  color: var(--body-text);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.house-doc .hd-toc a:hover {
+  border-bottom-color: var(--border-strong);
+}
+</style>
+
+<style data-assembly-css="component-section">
+/* @assembly-css-block component-section */
+.house-doc .hd-section {
+  margin: 0;
+}
+</style>
+
+<style data-assembly-css="component-adr">
+/* @assembly-css-block component-adr */
+.house-doc .hd-adr {
+  margin: 24px 0 32px;
+  max-width: var(--measure);
+}
+
+.house-doc .hd-adr h4 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--body-text-subtle);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  margin: 0 0 6px;
+}
+
+.house-doc .hd-adr > section {
+  padding: 14px 0 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.house-doc .hd-adr > section:first-child {
+  border-top: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-adr > section:last-child {
+  border-bottom: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-adr p {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--body-text-muted);
+  line-height: 1.6;
+}
+
+.house-doc .hd-adr p + p {
+  margin-top: 8px;
+}
+</style>
+
+<style data-assembly-css="component-sig">
+/* @assembly-css-block component-sig */
+.house-doc .hd-sig {
+  margin: 24px 0 32px;
+  padding: 0;
+  max-width: var(--measure);
+}
+
+.house-doc .hd-sig pre {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  background: var(--surface-inline);
+  border: 1px solid var(--border-rule);
+  border-radius: var(--radius-sm);
+  max-height: none;
+}
+
+.house-doc .hd-sig-name {
+  color: var(--body-text);
+  font-weight: 600;
+}
+
+.house-doc .hd-sig-arg {
+  color: var(--accent-primary);
+}
+
+.house-doc .hd-sig figcaption {
+  font-size: 14px;
+  color: var(--body-text-muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: none;
+}
+
+.house-doc .hd-arglist {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  font-size: 13px;
+}
+
+.house-doc .hd-arglist dt {
+  font-family: var(--font-mono);
+  color: var(--body-text);
+}
+
+.house-doc .hd-arglist dd {
+  margin: 0;
+  color: var(--body-text-subtle);
+}
+</style>
+
+<style data-assembly-css="component-metric-grid">
+/* @assembly-css-block component-metric-grid */
+.house-doc .hd-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 24px 0 32px;
+  border-top: 1px solid var(--border-rule);
+  border-bottom: 1px solid var(--border-rule);
+}
+
+.house-doc .hd-metric {
+  padding: 18px 20px 18px 0;
+  border-right: 1px solid var(--border-rule);
+  transition: border-color var(--transition-slow);
+}
+
+.house-doc .hd-metric:nth-child(n+2) {
+  padding-left: 20px;
+}
+
+.house-doc .hd-metric:last-child {
+  border-right: none;
+}
+
+.house-doc .hd-metric-key {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--body-text-subtle);
+  text-transform: lowercase;
+  letter-spacing: 0;
+}
+
+.house-doc .hd-metric-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin-top: 8px;
+  color: var(--body-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.house-doc .hd-metric-note {
+  font-size: 12px;
+  color: var(--body-text-muted);
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .house-doc .hd-metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .house-doc .hd-metric:nth-child(2) {
+    border-right: none;
+  }
+
+  .house-doc .hd-metric:nth-child(1),
+  .house-doc .hd-metric:nth-child(2) {
+    border-bottom: 1px solid var(--border-rule);
+  }
+}
+</style>
+
+<style data-assembly-css="component-aside">
+/* @assembly-css-block component-aside */
+.house-doc .hd-aside {
+  margin: 20px 0 28px 24px;
+  max-width: 600px;
+  font-size: 13.5px;
+  color: var(--body-text-subtle);
+  line-height: 1.55;
+}
+
+.house-doc .hd-aside-marker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--body-text-subtle);
+  margin-right: 6px;
+}
+
+.house-doc .hd-aside strong {
+  color: var(--body-text-muted);
+  font-weight: 600;
+}
+</style>
+
+<style data-assembly-css="swiftui-template-tutorial">
+/* @assembly-css-block swiftui-template-tutorial
+   Document-specific diagrams and code callouts. Scoped under .house-doc.
+*/
+.house-doc .hd-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--body-text-muted);
+  margin-bottom: 0.85rem;
+}
+.house-doc .hd-code-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin: 1.35rem 0 0.35rem;
+  color: var(--body-text-subtle);
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.house-doc .hd-code-label span:last-child {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--body-text-faint);
+}
+.house-doc .hd-table code,
+.house-doc p code,
+.house-doc li code,
+.house-doc dd code {
+  font-family: var(--font-mono);
+  font-size: 0.91em;
+  background: var(--surface-inline);
+  border: 1px solid var(--surface-inline-border);
+  border-radius: var(--radius-sm);
+  padding: 0.05em 0.32em;
+}
+.house-doc pre code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.house-doc .template-window {
+  margin: 1.65rem 0 0.8rem;
+  border: 1px solid var(--border-rule);
+  border-radius: 22px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.58fr) minmax(440px, 1.42fr);
+  background: var(--border-rule);
+  box-shadow: 0 18px 54px rgba(0,0,0,0.16);
+  min-height: 560px;
+}
+.house-doc .template-sidebar,
+.house-doc .template-detail {
+  min-height: 560px;
+  position: relative;
+  background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+}
+html[data-theme="dark"] .house-doc .template-sidebar,
+html[data-theme="dark"] .house-doc .template-detail {
+  background: linear-gradient(145deg, #17191e, #20252c);
+}
+.house-doc .template-sidebar {
+  padding: 14px 14px 18px;
+}
+.house-doc .template-sidebar-top {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--body-text-muted);
+  font-size: 0.78rem;
+}
+.house-doc .template-traffic {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--body-text-muted) 35%, transparent);
+  box-shadow: 20px 0 0 color-mix(in srgb, var(--body-text-muted) 28%, transparent), 40px 0 0 color-mix(in srgb, var(--body-text-muted) 22%, transparent);
+  margin-right: 54px;
+}
+.house-doc .template-search {
+  height: 30px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-tertiary) 86%, transparent);
+  border: 1px solid var(--border-subtle);
+  margin: 10px 0 12px;
+}
+.house-doc .template-list-section {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--body-text-faint);
+  margin: 6px 0 8px;
+}
+.house-doc .template-list-row {
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  gap: 9px;
+  padding: 0 10px;
+  color: var(--body-text-muted);
+  font-size: 0.78rem;
+}
+.house-doc .template-list-row.is-selected {
+  background: color-mix(in srgb, var(--bg-tertiary) 92%, transparent);
+  border: 1px solid var(--border-subtle);
+  color: var(--body-text);
+}
+.house-doc .template-list-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent-primary) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 32%, transparent);
+}
+.house-doc .template-detail {
+  overflow: hidden;
+}
+.house-doc .template-toolbar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 58px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px 0 18px;
+  background: transparent;
+  border-bottom: 0;
+  box-shadow: none;
+  isolation: isolate;
+}
+.house-doc .template-toolbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -36px 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 72% 12%, color-mix(in srgb, var(--bg-secondary) 24%, transparent), transparent 42%),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--bg-secondary) 62%, transparent) 0%,
+      color-mix(in srgb, var(--bg-secondary) 42%, transparent) 54%,
+      transparent 100%
+    );
+  -webkit-backdrop-filter: saturate(1.18) blur(18px);
+  backdrop-filter: saturate(1.18) blur(18px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,0.72) 76%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,0.72) 76%, transparent 100%);
+}
+.house-doc .template-title {
+  font-weight: 650;
+  font-size: 0.82rem;
+  color: var(--body-text);
+  white-space: nowrap;
+}
+.house-doc .template-toolbar-spacer { flex: 1 1 auto; }
+.house-doc .template-icon-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-secondary) 72%, transparent);
+  border: 1px solid var(--border-subtle);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+}
+.house-doc .template-segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+  border: 1px solid var(--border-subtle);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  backdrop-filter: blur(16px) saturate(1.1);
+}
+.house-doc .template-segment {
+  width: 28px;
+  height: 24px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid transparent;
+}
+.house-doc .template-segment.is-on {
+  background: color-mix(in srgb, var(--body-text) 12%, transparent);
+  border-color: var(--border-subtle);
+}
+.house-doc .template-scroll {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  padding: 24px 26px 78px;
+}
+.house-doc .template-scroll::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 122px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg-secondary) 35%, transparent), transparent 88%);
+  opacity: 0.55;
+}
+.house-doc .template-content {
+  position: relative;
+  z-index: 0;
+  padding-top: 24px;
+  max-width: 720px;
+}
+.house-doc .template-card {
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+}
+.house-doc .template-card.is-under-toolbar {
+  margin-top: -14px;
+  opacity: 0.52;
+  filter: blur(0.2px);
+}
+.house-doc .template-card strong,
+.house-doc .template-row strong {
+  display: block;
+  color: var(--body-text);
+  margin-bottom: 5px;
+  font-size: 0.86rem;
+}
+.house-doc .template-card span,
+.house-doc .template-row span {
+  color: var(--body-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+.house-doc .template-row {
+  border-top: 1px solid var(--border-subtle);
+  padding: 12px 0;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+}
+.house-doc .template-row-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-primary) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 28%, transparent);
+}
+.house-doc .template-bottom-spacer {
+  height: 56px;
+  border: 1px dashed color-mix(in srgb, var(--border-rule) 72%, transparent);
+  border-radius: 12px;
+  color: var(--body-text-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  margin-top: 18px;
+}
+.house-doc .hd-flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+  margin: 1.15rem 0;
+}
+.house-doc .hd-flow-step {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  border-radius: 14px;
+  padding: 12px;
+}
+.house-doc .hd-flow-step strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--body-text);
+  margin-bottom: 0.35rem;
+}
+.house-doc .hd-flow-step span {
+  color: var(--body-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+.house-doc .hd-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 1rem 0 0;
+}
+.house-doc .hd-mini-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--surface-card);
+}
+.house-doc .hd-mini-card h4 { margin: 0 0 0.5rem; }
+.house-doc .hd-mini-card p { margin: 0; color: var(--body-text-muted); }
+.house-doc .hd-checklist li + li { margin-top: 0.45rem; }
+.house-doc .hd-small { font-size: 0.92rem; color: var(--body-text-muted); }
+.house-doc .hd-wide-note { max-width: 880px; }
+@media (max-width: 860px) {
+  .house-doc .template-window { grid-template-columns: 1fr; }
+  .house-doc .template-sidebar { min-height: 220px; }
+  .house-doc .template-detail { min-height: 520px; }
+  .house-doc .hd-flow { grid-template-columns: 1fr 1fr; }
+  .house-doc .hd-two-col { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .house-doc .hd-flow { grid-template-columns: 1fr; }
+  .house-doc .template-segmented { display: none; }
+  .house-doc .template-toolbar { gap: 8px; }
+}
+@media print {
+  .house-doc .template-window { box-shadow: none; }
+  .house-doc .template-toolbar::before,
+  .house-doc .template-segmented { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+</style>
+
+  
+</head>
+<body class="house-doc">
+  <main class="hd-page">
+
+    <!-- @insert-point name="HEADER_SLOT" assembled="true" -->
+
+<header class="hd-title-block" data-assembly-fragment="title-block">
+  <div class="hd-kicker">SwiftUI template implementation tutorial</div>
+  <h1>Transparent Toolbar + Scroll-Under Split View</h1>
+  <p class="hd-subtitle">A detailed implementation guide for the SwiftUITemplate app shell: macOS 26 SwiftUI, <code>NavigationSplitView</code>, native transparent top toolbar behavior, reusable destination screens, appearance control, and the project template workflow for spinning up new apps quickly.</p>
+  <p class="hd-meta-row">May 2026 &nbsp;·&nbsp; macOS 26 SwiftUI &nbsp;·&nbsp; NavigationSplitView / ScrollView / scrollEdgeEffectStyle / XcodeGen</p>
+</header>
+<div class="hd-mode-toggle" data-assembly-fragment="theme-toggle">
+  <span>light</span>
+  <button class="hd-toggle" type="button" data-theme-toggle aria-label="Toggle dark theme" aria-pressed="true">
+    <span class="hd-toggle-thumb" aria-hidden="true"></span>
+  </button>
+  <span>dark</span>
+</div>
+<nav class="hd-toc" aria-label="Document contents" data-assembly-fragment="toc">
+  <div class="hd-toc-label">contents</div>
+  <ol>
+    <li><a href="#target-result">Target result</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#app-shell">App shell</a></li>
+    <li><a href="#split-root">Split root</a></li>
+    <li><a href="#toolbar-behavior">Toolbar behavior</a></li>
+    <li><a href="#destination-contract">Destination screens</a></li>
+    <li><a href="#bottom-edge">Bottom edge</a></li>
+    <li><a href="#screen-registry">Screen registry</a></li>
+    <li><a href="#template-workflow">Template workflow</a></li>
+    <li><a href="#implementation-checklist">Checklist</a></li>
+    <li><a href="#verification-protocol">Verification</a></li>
+  </ol>
+</nav>
+
+    <!-- @insert-point name="BODY_SLOT" assembled="true" -->
+
+<div class="hd-metric-grid" data-assembly-fragment="metric-grid">
+  <div class="hd-metric">
+    <div class="hd-metric-key">root shell</div>
+    <div class="hd-metric-value">NavigationSplitView</div>
+    <div class="hd-metric-note">sidebar registry + detail destination host</div>
+  </div>
+  <div class="hd-metric">
+    <div class="hd-metric-key">top edge</div>
+    <div class="hd-metric-value">native</div>
+    <div class="hd-metric-note"><code>.scrollEdgeEffectStyle(.soft, for: .top)</code></div>
+  </div>
+  <div class="hd-metric">
+    <div class="hd-metric-key">toolbar material</div>
+    <div class="hd-metric-value">automatic</div>
+    <div class="hd-metric-note"><code>.toolbarBackgroundVisibility(.automatic, for: .windowToolbar)</code></div>
+  </div>
+  <div class="hd-metric">
+    <div class="hd-metric-key">bottom edge</div>
+    <div class="hd-metric-value">layout only</div>
+    <div class="hd-metric-note">clear <code>safeAreaInset</code>; no fade or tint</div>
+  </div>
+</div>
+
+<section id="target-result" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>1. Target result</h2>
+  <p>This template is a small macOS SwiftUI app shell for starting new projects without rebuilding the same navigation, toolbar, appearance, settings, project generation, and packaging scaffolding every time. The important visual behavior is the top edge: content scrolls underneath a native transparent toolbar region, and the system supplies the soft scroll-edge transition that keeps toolbar text and controls legible without adding a hard separator.</p>
+  <p>The app intentionally does <em>not</em> implement the transcript-style bottom gradient/mask from the Turnstile document. The bottom edge here is only a reserved layout zone: a clear <code>safeAreaInset</code> gives scroll content room to clear future bottom chrome, but it does not darken, fade, blur, or tint the content.</p>
+  <figure>
+  <div class="template-window" aria-label="SwiftUITemplate split-view mockup">
+    <div class="template-sidebar">
+      <div class="template-sidebar-top"><div class="template-traffic"></div><span>sidebar</span></div>
+      <div class="template-search"></div>
+      <div class="template-list-section">Lorem</div>
+      <div class="template-list-row is-selected"><div class="template-list-icon"></div><strong>Lorem Ipsum</strong></div>
+      <div class="template-list-row"><div class="template-list-icon"></div><span>Dolor Sit</span></div>
+    </div>
+    <div class="template-detail">
+      <div class="template-toolbar">
+        <div class="template-title">Lorem Ipsum</div>
+        <div class="template-toolbar-spacer"></div>
+        <div class="template-icon-button"></div>
+        <div class="template-segmented" aria-label="appearance picker mockup">
+          <div class="template-segment"></div>
+          <div class="template-segment is-on"></div>
+          <div class="template-segment"></div>
+        </div>
+      </div>
+      <div class="template-scroll">
+        <div class="template-content">
+          <div class="template-card is-under-toolbar"><strong>Consectetur Adipiscing</strong><span>This first card scrolls behind the toolbar region. The system supplies the soft top transition, not a custom overlay.</span></div>
+          <div class="template-card"><strong>Ullamco Laboris</strong><span>Cards, rows, icons, and ordinary SwiftUI content remain inside a normal ScrollView.</span></div>
+          <div class="template-card"><strong>Sunt in Culpa</strong><span>The toolbar is hosted by the detail column, while the scroll edge effect is owned by the destination ScrollView.</span></div>
+          <div class="template-row"><div class="template-row-icon"></div><div><strong>Dolor Sit row variant</strong><span>The same recipe works for list-style content screens.</span></div></div>
+          <div class="template-row"><div class="template-row-icon"></div><div><strong>Reusable screen contract</strong><span>Each scrollable destination applies the transparent background and top scroll-edge modifier.</span></div></div>
+          <div class="template-bottom-spacer">clear bottom safe-area inset, not a fade</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption>Fig. 01&nbsp;&nbsp;The template keeps the top edge native: no hard toolbar border, no parent mask, and no custom bottom treatment. The toolbar blur is system-owned; the bottom spacer is only layout breathing room.</figcaption>
+</figure>
+</section>
+<section id="architecture" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>2. Architecture: the ownership split</h2>
+  <p>The stable pattern is to let each level own exactly one job. The app entry point owns process and window policy. The split root owns selection and the toolbar host. Each destination screen owns its own scroll view and scroll-edge behavior. The screen registry owns the mapping from sidebar case to destination view.</p>
+  <div class="hd-flow">
+    <div class="hd-flow-step"><strong>App shell</strong><span><code>SwiftUITemplateApp</code> creates the scene, applies appearance, disables unwanted window affordances, and sizes the main window.</span></div>
+    <div class="hd-flow-step"><strong>Split root</strong><span><code>ContentView</code> owns sidebar selection, renders <code>NavigationSplitView</code>, and hosts the toolbar picker.</span></div>
+    <div class="hd-flow-step"><strong>Destination</strong><span><code>LoremIpsumScreen</code> and <code>DolorSitScreen</code> own the actual <code>ScrollView</code> and its top scroll-edge effect.</span></div>
+    <div class="hd-flow-step"><strong>Registry</strong><span><code>Screen</code> declares what appears in the sidebar and what view each row opens.</span></div>
+  </div>
+  <p>This split is what keeps the top toolbar reliable. A parent wrapper can host the toolbar, but the scroll-edge effect must remain attached to the actual scroll view whose content is moving under the toolbar. Conversely, the toolbar background should not be hidden or replaced by an ad hoc overlay; it should remain system-managed.</p>
+</section>
+<section id="app-shell" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>3. App shell: launch, scene, appearance, and window policy</h2>
+  <p>The app entry point is deliberately compact, but it does more than create a window. It disables automatic window tabbing, ensures the app activates as a regular macOS app, stores the selected appearance in <code>AppStorage</code>, and uses an <code>NSApplicationDelegate</code> for menu and window cleanup that SwiftUI does not expose cleanly at the scene level.</p>
+  <div class="hd-code-label"><span>Sources/App/SwiftUITemplateApp.swift</span><span>core scene and appearance loop</span></div>
+  <pre><code>import AppKit
+import SwiftUI
+
+@main
+struct SwiftUITemplateApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @AppStorage(SettingsStorageKey.colorSchemeMode.rawValue) private var colorSchemeMode: ColorSchemeMode = .system
+
+    init() {
+        NSWindow.allowsAutomaticWindowTabbing = false
+        NSApplication.shared.setActivationPolicy(.regular)
+
+        DispatchQueue.main.async {
+            NSApp.activate(ignoringOtherApps: true)
+        }
+    }
+
+    var body: some Scene {
+        Window(&quot;SwiftUITemplate&quot;, id: &quot;main&quot;) {
+            ContentView(colorSchemeMode: $colorSchemeMode)
+                .onAppear { applyColorScheme() }
+                .onChange(of: colorSchemeMode) { applyColorScheme() }
+        }
+        .commands {
+            CommandGroup(replacing: .windowArrangement) { }
+        }
+
+        Settings {
+            SettingsView()
+        }
+        .defaultSize(width: 560, height: 340)
+    }
+
+    private func applyColorScheme() {
+        NSApp.appearance = colorSchemeMode.nsAppearance
+    }
+}</code></pre>
+  <p>The appearance setting is intentionally applied through <code>NSApp.appearance</code>, not by sprinkling <code>.preferredColorScheme</code> through the view tree. That gives the template a native macOS-wide appearance switch: toolbar material, sidebar chrome, settings window controls, and normal SwiftUI content all resolve against the same AppKit appearance.</p>
+  <div class="hd-two-col">
+    <div class="hd-mini-card"><h4>Window setup</h4><p><code>configureMainWindow()</code> enforces a practical minimum size and centers the first launch window if it is smaller than the intended template baseline.</p></div>
+    <div class="hd-mini-card"><h4>Menu setup</h4><p>The delegate removes unsupported menu items so the generated starter app feels intentional rather than like a raw SwiftUI sample.</p></div>
+  </div>
+</section>
+<section id="split-root" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>4. Split root: sidebar selection and detail toolbar host</h2>
+  <p><code>ContentView</code> is the architectural center of the visual pattern. It owns the selected <code>Screen</code>, builds the sidebar <code>List</code>, renders the selected destination in the detail column, and attaches the toolbar to the detail column rather than to the individual screens.</p>
+  <div class="hd-code-label"><span>Sources/Navigation/ContentView.swift</span><span>NavigationSplitView + toolbar owner</span></div>
+  <pre><code>struct ContentView: View {
+    @State private var selection: Screen?
+    @Binding var colorSchemeMode: ColorSchemeMode
+
+    init(colorSchemeMode: Binding&lt;ColorSchemeMode&gt;, initialSelection: Screen? = .loremIpsum) {
+        self._colorSchemeMode = colorSchemeMode
+        self._selection = State(initialValue: initialSelection)
+    }
+
+    var body: some View {
+        NavigationSplitView {
+            List(selection: $selection) {
+                Section(&quot;Lorem&quot;) {
+                    ForEach(Screen.allCases) { screen in
+                        Label(screen.title, systemImage: screen.systemImage)
+                            .tag(screen)
+                    }
+                }
+            }
+            .listStyle(.sidebar)
+        } detail: {
+            detailView
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Picker(&quot;Appearance&quot;, selection: $colorSchemeMode) {
+                            Image(systemName: &quot;sun.max&quot;).tag(ColorSchemeMode.light)
+                            Image(systemName: &quot;moon.fill&quot;).tag(ColorSchemeMode.dark)
+                            Image(systemName: &quot;circle.lefthalf.filled&quot;).tag(ColorSchemeMode.system)
+                        }
+                        .pickerStyle(.segmented)
+                        .glassEffect()
+                        .labelsHidden()
+                        .help(&quot;Choose the app appearance&quot;)
+                    }
+                }
+                .toolbarBackgroundVisibility(.automatic, for: .windowToolbar)
+        }
+    }
+
+    @ViewBuilder
+    var detailView: some View {
+        (selection ?? .loremIpsum).destination
+    }
+}</code></pre>
+  <p>The toolbar is intentionally attached after <code>detailView</code>. That gives every destination the same right-side appearance control without making every screen repeat toolbar code. The destinations still own their own <code>.navigationTitle(...)</code>, so the title shown in the toolbar remains screen-specific.</p>
+</section>
+<section id="toolbar-behavior" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>5. The top toolbar: why it stays transparent</h2>
+  <p>The transparent toolbar is the result of three pieces cooperating, not one magic modifier. The toolbar must have a system-managed background available, the scroll view underneath it must be visually transparent, and the scroll view must request a top scroll-edge effect.</p>
+  <table class="hd-table">
+    <thead><tr><th>Responsibility</th><th>Owner</th><th>Required modifier</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td>Toolbar material</td><td><code>ContentView</code> detail host</td><td><code>.toolbarBackgroundVisibility(.automatic, for: .windowToolbar)</code></td><td>Keeps the native window toolbar background available for the system scroll-edge treatment.</td></tr>
+      <tr><td>Scrollable content</td><td>Each destination screen</td><td><code>ScrollView Ellipsis</code></td><td>The system effect must attach to the scroll view that actually moves.</td></tr>
+      <tr><td>Transparent viewport</td><td>Each destination screen</td><td><code>.scrollContentBackground(.hidden)</code> + <code>.background(.clear)</code></td><td>Prevents the scroll view from painting an opaque backing that blocks the toolbar material.</td></tr>
+      <tr><td>Top soft edge</td><td>Each destination screen</td><td><code>.scrollEdgeEffectStyle(.soft, for: .top)</code></td><td>Requests the native fade/softening where content enters the top safe-area/toolbar region.</td></tr>
+    </tbody>
+  </table>
+  <div class="hd-code-label"><span>Do this</span><span>system-owned top effect</span></div>
+  <pre><code>ScrollView {
+    VStack(alignment: .leading, spacing: 14) {
+        // Screen content
+    }
+    .padding(24)
+}
+.scrollContentBackground(.hidden)
+.background(.clear)
+.scrollEdgeEffectStyle(.soft, for: .top)
+.navigationTitle(&quot;Lorem Ipsum&quot;)</code></pre>
+  <div class="hd-code-label"><span>Do not do this</span><span>breaks the toolbar relationship</span></div>
+  <pre><code>// This removes the material the native scroll-edge effect expects.
+.toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+
+// These flatten or replace the scroll view from outside; that can prevent
+// SwiftUI/AppKit from treating it as the native scroll view under the toolbar.
+CompositedWrapper {
+    ScrollView { ... }
+}
+.compositingGroup()
+.mask { ... }
+.layerEffect(...)</code></pre>
+  <p>The visual model is simple: the toolbar remains a native toolbar; the scroll view remains a native scroll view; the two meet at the top safe-area boundary. The app does not draw a fake toolbar background, does not add a hard separator, and does not flatten the scroll view into a parent mask.</p>
+</section>
+<section id="destination-contract" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>6. Destination screens: the reusable scroll contract</h2>
+  <p>The template ships with two destination shapes: a card-oriented screen and a list-row screen. Both use the same outer scroll recipe. This is the most important convention for future screens in the template: the content can vary, but the scroll chrome contract should stay consistent.</p>
+  <div class="hd-code-label"><span>Sources/Screens/LoremIpsumScreen.swift</span><span>card screen recipe</span></div>
+  <pre><code>struct LoremIpsumScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(&quot;Lorem Ipsum&quot;)
+                    .font(.largeTitle)
+                    .padding(.bottom, 4)
+
+                ForEach(cards) { card in
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(card.title).font(.headline)
+                        Text(card.body)
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.background, in: RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(.separator, lineWidth: 0.5))
+                }
+            }
+            .padding(24)
+        }
+        .scrollContentBackground(.hidden)
+        .background(.clear)
+        .scrollEdgeEffectStyle(.soft, for: .top)
+        .safeAreaInset(edge: .bottom, spacing: 0) { Color.clear.frame(height: 56) }
+        .navigationTitle(&quot;Lorem Ipsum&quot;)
+    }
+}</code></pre>
+  <div class="hd-code-label"><span>Sources/Screens/DolorSitScreen.swift</span><span>list-row screen uses the same outer contract</span></div>
+  <pre><code>ScrollView {
+    VStack(alignment: .leading, spacing: 0) {
+        Text(&quot;Dolor Sit&quot;)
+            .font(.largeTitle)
+            .padding(.bottom, 16)
+
+        ForEach(rows) { row in
+            Divider()
+            HStack(spacing: 14) {
+                Image(systemName: row.icon)
+                    .font(.title2)
+                    .foregroundStyle(.tint)
+                    .frame(width: 32, alignment: .center)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(row.title)
+                    Text(row.subtitle)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 10)
+        }
+        Divider()
+    }
+    .padding(24)
+}
+.scrollContentBackground(.hidden)
+.background(.clear)
+.scrollEdgeEffectStyle(.soft, for: .top)
+.safeAreaInset(edge: .bottom, spacing: 0) { Color.clear.frame(height: 56) }
+.navigationTitle(&quot;Dolor Sit&quot;)</code></pre>
+  <p>The practical rule is: when a screen scrolls, copy the scroll recipe before designing the content. That keeps toolbar behavior stable across cards, rows, forms, inspectors, settings-like panes, and future project-specific destinations.</p>
+</section>
+<section id="bottom-edge" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>7. Bottom edge: clear inset, not a fade</h2>
+  <p>This template deliberately leaves the bottom edge visually neutral. There is no bottom gradient, no multiply blend, no content mask, and no Liquid Glass composer. The bottom modifier exists for one reason: layout breathing room.</p>
+  <div class="hd-callout hd-callout-neutral" data-assembly-fragment="callout-neutral">
+    <strong>Important distinction:</strong> <code>safeAreaInset(edge: .bottom)</code> changes layout. It does not apply a visual treatment. The clear view reserves space so the last row or card can scroll above future bottom chrome instead of being clipped against the window edge.
+  </div>
+<div class="hd-code-label"><span>Bottom inset contract</span><span>layout-only spacer</span></div><pre><code>.safeAreaInset(edge: .bottom, spacing: 0) {
+    Color.clear.frame(height: 56)
+}</code></pre>
+  <p>If a future app built from this template adds a floating composer, media transport, inspector rail, or bottom command bar, that feature should be implemented as a separate layer with its own ownership. Do not preemptively add a bottom edge effect to the base template; the base template should stay visually quiet and predictable.</p>
+</section>
+<section id="screen-registry" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>8. Screen registry: adding a new destination</h2>
+  <p>The sidebar is driven by <code>Screen.allCases</code>. Adding a new screen should be a registry edit, not a rewrite of the navigation root. This keeps the template fast to adapt: add a case, give it a title and SF Symbol, then return the destination view.</p>
+  <div class="hd-code-label"><span>Sources/Navigation/Screen.swift</span><span>sidebar registry</span></div>
+  <pre><code>enum Screen: String, CaseIterable, Hashable, Identifiable {
+    case loremIpsum
+    case dolorSit
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .loremIpsum: &quot;Lorem Ipsum&quot;
+        case .dolorSit: &quot;Dolor Sit&quot;
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .loremIpsum: &quot;snowflake&quot;
+        case .dolorSit: &quot;wind.snow&quot;
+        }
+    }
+
+    @ViewBuilder
+    var destination: some View {
+        switch self {
+        case .loremIpsum: LoremIpsumScreen()
+        case .dolorSit: DolorSitScreen()
+        }
+    }
+}</code></pre>
+  <div class="hd-code-label"><span>Adding a screen</span><span>minimal extension</span></div>
+  <pre><code>// 1. Add the case.
+case dashboard
+
+// 2. Add the title.
+case .dashboard: &quot;Dashboard&quot;
+
+// 3. Add the sidebar symbol.
+case .dashboard: &quot;rectangle.3.group&quot;
+
+// 4. Add the destination.
+case .dashboard: DashboardScreen()</code></pre>
+  <p>A new destination should usually start from the destination contract in section 6. The navigation root should not need to know whether the screen is card-based, row-based, form-based, or chart-based.</p>
+</section>
+<section id="appearance" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>9. Appearance control: toolbar picker, settings pane, and AppStorage</h2>
+  <p>The appearance picker in the toolbar and the appearance picker in Settings share the same <code>AppStorage</code> key. That is the correct template pattern: two controls, one persisted setting, one application-level effect.</p>
+  <div class="hd-code-label"><span>Sources/Appearance/ColorSchemeMode.swift</span><span>system / light / dark bridge</span></div>
+  <pre><code>enum ColorSchemeMode: String, CaseIterable, Hashable, Identifiable {
+    case system
+    case light
+    case dark
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .system: &quot;Automatic&quot;
+        case .light: &quot;Light&quot;
+        case .dark: &quot;Dark&quot;
+        }
+    }
+
+    var nsAppearance: NSAppearance? {
+        switch self {
+        case .system: nil
+        case .light: NSAppearance(named: .aqua)
+        case .dark: NSAppearance(named: .darkAqua)
+        }
+    }
+}</code></pre>
+  <p>The toolbar picker uses icons and <code>.glassEffect()</code> because it is chrome. The settings picker uses labels and a conventional settings row because it is a preference panel. Both write to the same setting, so the app appearance stays coherent.</p>
+</section>
+<section id="template-workflow" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>10. Project template workflow</h2>
+  <p>The repository is not just a SwiftUI view sample. It is a project template with three cooperating build surfaces: XcodeGen for the normal Xcode project, SwiftPM for package/test compatibility, and shell scripts for direct app-bundle packaging or renaming.</p>
+  <table class="hd-table">
+    <thead><tr><th>File</th><th>Role</th><th>Template rule</th></tr></thead>
+    <tbody>
+      <tr><td><code>project.yml</code></td><td>XcodeGen source of truth</td><td>Edit this when adding files, targets, bundle identifiers, project settings, or schemes.</td></tr>
+      <tr><td><code>Package.swift</code></td><td>Swift package shape</td><td>Keeps <code>swift test</code> and package-opening workflows alive.</td></tr>
+      <tr><td><code>Makefile</code></td><td>Common commands</td><td>Routes day-to-day build/run/test through predictable commands.</td></tr>
+      <tr><td><code>Scripts/rename-template.sh</code></td><td>Template bootstrap</td><td>Renames app/product/test identifiers, removes the stale generated project, and smoke-tests with <code>swift build</code>.</td></tr>
+      <tr><td><code>Resources/AppIcon.icon</code></td><td>Icon source</td><td>Replace SVG/icon sources when branding the new app.</td></tr>
+    </tbody>
+  </table>
+  <div class="hd-code-label"><span>Bootstrap a new app</span><span>template rename path</span></div>
+  <pre><code>./Scripts/rename-template.sh AcmeNotes com.acme.notes
+make project
+make run-debug
+swift test</code></pre>
+  <div class="hd-code-label"><span>Common development commands</span><span>Makefile surface</span></div>
+  <pre><code>make project       # regenerate SwiftUITemplate.xcodeproj from project.yml
+make run-debug     # build Debug and launch the app
+make build-release # build Release without launching
+make test          # run Xcode test scheme
+swift test         # run the SwiftPM test path</code></pre>
+  <p>The generated <code>.xcodeproj</code> is intentionally disposable. The durable project description is <code>project.yml</code>. After renaming or adding source files, regenerate the project instead of hand-editing the generated Xcode project.</p>
+</section>
+<section id="complete-reference" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>11. Complete reference pattern</h2>
+  <p>For a new screen in this template, start with this structure. It keeps the top toolbar behavior intact, gives the detail view a native navigation title, and leaves room at the bottom without adding any visual effect.</p>
+<div class="hd-code-label"><span>Reusable destination scaffold</span><span>copy this for ordinary scrolling screens</span></div><pre><code>import SwiftUI
+
+struct DashboardScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(&quot;Dashboard&quot;)
+                    .font(.largeTitle)
+                    .padding(.bottom, 4)
+
+                // Cards, rows, charts, forms, or project-specific content.
+            }
+            .padding(24)
+        }
+        .scrollContentBackground(.hidden)
+        .background(.clear)
+        .scrollEdgeEffectStyle(.soft, for: .top)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear.frame(height: 56)
+        }
+        .navigationTitle(&quot;Dashboard&quot;)
+    }
+}</code></pre>
+  <p>For a non-scrolling screen, omit the scroll modifiers. Do not wrap a non-scrolling screen in a dummy <code>ScrollView</code> just to satisfy the pattern. The contract applies to screens that actually scroll.</p>
+</section>
+<section id="implementation-checklist" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>12. Step-by-step implementation checklist</h2>
+  <ol class="hd-steps" data-assembly-fragment="steps">
+    <li><strong>Create the app scene.</strong><span>Use a single main <code>Window</code> that renders <code>ContentView</code>. Persist appearance with <code>AppStorage</code> and apply it at the <code>NSApp</code> level.</span></li>
+    <li><strong>Install the split root.</strong><span>Use <code>NavigationSplitView</code>. Put the sidebar <code>List(selection:)</code> in the first column and the selected destination in the detail column.</span></li>
+    <li><strong>Attach toolbar chrome to the detail host.</strong><span>Place shared toolbar controls after <code>detailView</code>, not inside every destination screen.</span></li>
+    <li><strong>Keep toolbar background automatic.</strong><span>Use <code>.toolbarBackgroundVisibility(.automatic, for: .windowToolbar)</code>. Do not hide the toolbar background when relying on the native top scroll edge.</span></li>
+    <li><strong>Make each scrolling destination transparent.</strong><span>Apply <code>.scrollContentBackground(.hidden)</code> and <code>.background(.clear)</code> to the destination <code>ScrollView</code>.</span></li>
+    <li><strong>Attach the top edge effect to the actual ScrollView.</strong><span>Use <code>.scrollEdgeEffectStyle(.soft, for: .top)</code> on the scroll view itself, not on a parent wrapper.</span></li>
+    <li><strong>Reserve bottom space without visual treatment.</strong><span>Add the clear bottom <code>safeAreaInset</code> only when the screen benefits from extra bottom breathing room.</span></li>
+    <li><strong>Register new screens in <code>Screen</code>.</strong><span>Add the case, title, SF Symbol, and destination. The sidebar updates automatically through <code>Screen.allCases</code>.</span></li>
+  </ol>
+</section>
+<section id="failure-modes" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>13. Failure modes and precise fixes</h2>
+  <table class="hd-table">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Toolbar becomes opaque or gets a hard edge.</td><td>The scroll view was wrapped in an external compositing, mask, drawing, or effect layer; or the toolbar background was overridden.</td><td>Keep the <code>ScrollView</code> native and apply <code>.scrollEdgeEffectStyle(.soft, for: .top)</code> directly to it.</td></tr>
+      <tr><td>Top soft edge disappears.</td><td><code>.toolbarBackgroundVisibility(.hidden, for: .windowToolbar)</code> removed the material relationship the system effect resolves against.</td><td>Restore <code>.automatic</code> on the detail host.</td></tr>
+      <tr><td>Only one destination has the correct toolbar behavior.</td><td>The scroll recipe was added to one screen but not the others.</td><td>Make the recipe part of the screen scaffold for every scrolling destination.</td></tr>
+      <tr><td>Last card feels cramped at the bottom.</td><td>The bottom safe-area spacer was omitted or too small for the intended chrome.</td><td>Add or tune <code>Color.clear.frame(height: 56)</code> in <code>safeAreaInset(edge: .bottom)</code>.</td></tr>
+      <tr><td>Appearance picker changes the toolbar but not the app consistently.</td><td>Appearance was applied locally instead of through the shared <code>AppStorage</code> / <code>NSApp.appearance</code> path.</td><td>Keep the toolbar picker and Settings picker bound to the same stored <code>ColorSchemeMode</code>.</td></tr>
+      <tr><td>New files do not appear in Xcode.</td><td>The generated project is stale.</td><td>Run <code>make project</code>; do not manually patch the generated project file.</td></tr>
+    </tbody>
+  </table>
+</section>
+<section id="verification-protocol" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>14. Verification protocol</h2>
+  <p>Validate the template with both included destinations and at least one newly added destination. The point is not only to confirm that the current placeholders work, but to ensure the shell remains reusable after the first real app-specific screen is installed.</p>
+  <div class="hd-two-col">
+    <div class="hd-mini-card"><h4>Visual cases</h4><p>Cards, rows, long text, SF Symbols, selected sidebar row, toolbar segmented picker, light appearance, dark appearance, and system appearance.</p></div>
+    <div class="hd-mini-card"><h4>Navigation cases</h4><p>Initial selection, switching between screens, adding a third screen, opening Settings, changing appearance from Settings, and changing appearance from the toolbar.</p></div>
+  </div>
+  <ul class="hd-checklist">
+    <li>The toolbar has no hard bottom border while content scrolls under it.</li>
+    <li>The top soft edge appears only near the top safe-area/toolbar region.</li>
+    <li>The bottom edge has no fade, tint, blur, or artificial darkening.</li>
+    <li>The last content item can scroll above the bottom edge with comfortable spacing.</li>
+    <li>Every scrollable destination uses the same scroll-edge recipe.</li>
+    <li>The toolbar picker and Settings picker stay synchronized.</li>
+    <li>Renaming the template, regenerating the project, running the app, and running tests all complete without manual project edits.</li>
+  </ul>
+</section>
+<section id="extension-points" class="hd-section" data-assembly-fragment="section-prose">
+  <h2>15. Extension points</h2>
+  <p>The template is intentionally small, but it has clean seams for common app growth. Add features at the seam that owns the behavior rather than modifying the whole stack.</p>
+  <div class="hd-two-col">
+    <div class="hd-mini-card"><h4>More destinations</h4><p>Add cases to <code>Screen</code>. Keep destination layout decisions inside destination views.</p></div>
+    <div class="hd-mini-card"><h4>More toolbar items</h4><p>Add shared app-level actions in <code>ContentView</code>. Add screen-specific toolbar actions inside the destination only when they truly belong to that screen.</p></div>
+    <div class="hd-mini-card"><h4>Bottom bars</h4><p>Add a real bottom overlay only when the app has bottom chrome. Until then, keep the template's bottom edge as clear layout space.</p></div>
+    <div class="hd-mini-card"><h4>Settings</h4><p>Use the provided settings row components so future preferences keep the same macOS settings-window rhythm.</p></div>
+  </div>
+</section>
+<section id="glossary" class="hd-section" data-assembly-fragment="glossary">
+  <h2>16. Glossary</h2>
+  <dl class="hd-glossary">
+    <dt>Detail host</dt><dd>The right side of the <code>NavigationSplitView</code>, where the selected <code>Screen.destination</code> is rendered and where shared toolbar controls are attached.</dd>
+    <dt>Scroll-edge effect</dt><dd>The native SwiftUI treatment that softens content as it approaches a scroll view edge, used here only for the top toolbar boundary.</dd>
+    <dt>Toolbar background visibility</dt><dd>The setting that controls whether the macOS window toolbar background/material is available. This template uses <code>.automatic</code>.</dd>
+    <dt>Screen registry</dt><dd>The <code>Screen</code> enum that maps sidebar rows to destination views.</dd>
+    <dt>Bottom inset</dt><dd>A clear layout spacer inserted at the bottom safe area. It reserves scrollable breathing room but does not render a visual effect.</dd>
+  </dl>
+</section>
+
+    <!-- @insert-point name="FOOTER_SLOT" assembled="true" -->
+
+<footer class="hd-footer-note" data-assembly-fragment="footer-note">
+  <p>Assembled as a House Document from the uploaded SwiftUITemplate source archive. Scope: macOS SwiftUI template architecture, native transparent toolbar behavior, reusable scrolling destination screens, and project bootstrap workflow.</p>
+</footer>
+
+    <!-- @insert-point name="JS_SLOT" assembled="true" -->
+
+</main>
+
+<script data-assembly-js="theme">
+/* @assembly-js-block theme */
+(function () {
+  function applyTheme(theme) {
+    const normalized = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', normalized);
+
+    document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+      toggle.classList.toggle('is-on', normalized === 'dark');
+      toggle.setAttribute('aria-pressed', normalized === 'dark' ? 'true' : 'false');
+    });
+
+    try { localStorage.setItem('house-doc-theme', normalized); } catch (_) { }
+  }
+
+  function resolveInitialTheme() {
+    let saved = null;
+    try { saved = localStorage.getItem('house-doc-theme'); } catch (_) { }
+    if (saved === 'dark' || saved === 'light') return saved;
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+  }
+
+  window.houseDocApplyTheme = applyTheme;
+  window.houseDocToggleTheme = function () {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+      toggle.addEventListener('click', window.houseDocToggleTheme);
+    });
+    applyTheme(resolveInitialTheme());
+
+    document.querySelectorAll('.house-doc .hd-metric-value').forEach((el) => {
+      const text = (el.textContent || '').trim();
+      if (text.length > 60) el.title = text;
+    });
+  });
+})();
+</script>
+</body>
+</html>
