@@ -1,0 +1,17 @@
+{
+  "//": "Scoped typecheck for the landed object schema (src/schema). The app itself is plain JSX and is intentionally NOT covered here. Run via `npm run schema:typecheck`.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src/schema/**/*.ts"]
+}

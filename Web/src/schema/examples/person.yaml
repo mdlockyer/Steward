@@ -1,0 +1,13 @@
+id: ps_priya
+type: person
+title: "Priya Menon"
+provenance:
+  source: user
+createdAt: "2026-06-01T00:00:00Z"
+updatedAt: "2026-06-10T00:00:00Z"
+body:
+  name: "Priya Menon"
+  title: "Eng Lead, Capture"
+  handles:
+    slack: "U123PRIYA"
+    email: "priya@studio.example"

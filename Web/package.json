@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "schema:typecheck": "tsc -p tsconfig.schema.json",
+    "schema:check": "tsx src/schema/check.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",
@@ -17,10 +19,15 @@
     "lucide-react": "0.383.0",
     "openai": "^6.42.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "yaml": "^2.5.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/node": "^22.10.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
     "vite": "^5.4.0"
   }
 }

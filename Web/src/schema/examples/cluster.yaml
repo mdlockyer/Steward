@@ -1,0 +1,22 @@
+id: cl_capture
+type: cluster
+title: "Capture Pipeline"
+provenance:
+  source: model
+  author: "steward"
+createdAt: "2026-06-01T00:00:00Z"
+updatedAt: "2026-06-13T16:25:00Z"
+refs:
+  - { rel: contains, slot: member, to: mv_thermal }
+  - { rel: contains, slot: member, to: nt_codec }
+  - { rel: contains, slot: member, to: ps_priya }
+  - { rel: contains, slot: member, to: as_capture }
+body:
+  kind: project
+  auto: true
+  confidence: 0.78
+  summary: "The capture-pipeline program: rigs, codec, perf dataset, GA plan."
+  scope:
+    boostInScope: 2.0
+    allowGlobal: true
+    hardScope: false
