@@ -1,33 +1,66 @@
-# AGENTS.md
+# Repository Guidelines
 
-## Project Shape
+## Project Structure & Module Organization
 
-- This is a standalone Swift Package macOS SwiftUI app; there is intentionally no `.xcodeproj` or `.xcworkspace`.
-- Open `Package.swift` directly in Xcode and run the `SwiftUITemplate` scheme for the normal Xcode development path.
-- The executable target uses flat sources under `Sources/` rather than `Sources/SwiftUITemplate/`.
+`SwiftUITemplate` is a **hybrid macOS app**: a native SwiftUI shell whose detail
+area is a single transparent `WKWebView` hosting a React app. The native sidebar,
+glass toolbar, and appearance picker are real; the page content is web.
 
-## Commands
+- **Native shell** (`Sources/`, flat — not `Sources/SwiftUITemplate/`): `App/`
+  (entry point + AppDelegate menu/window tweaks), `Navigation/` (`ContentView`
+  owns the `NavigationSplitView`; `Screen` is the sidebar registry), `Settings/`,
+  `Appearance/`, and `Web/` (the WebView bridge — see below).
+- **Web app** (`Web/`): a self-contained Vite + React + TypeScript project. Built
+  output goes to `Resources/web/` (gitignored; `.gitkeep` keeps the dir so the
+  Xcode folder reference resolves) and is bundled into the `.app`.
+- **Three build inputs**: `project.yml` (XcodeGen source of truth → gitignored
+  `.xcodeproj`, the primary path), `Package.swift` (drives `swift test`), and
+  legacy `Scripts/build-app.sh`. Regenerate the project with `make project` after
+  editing `project.yml` or adding/removing Swift files.
 
-- Build a real app bundle with `make build`; output is `Build/app/SwiftUITemplate.app`.
-- Build and launch the app bundle with `make run`; this calls `./Scripts/run-app.sh`, which rebuilds via `./Scripts/build-app.sh` before `open`.
-- Clean packaged outputs with `make clean`; this removes `Build/` only, not SwiftPM `.Build/`.
-- Run package tests with `swift test`.
+### Native ↔ web bridge
 
-## Packaging Gotchas
+`Sources/Web/WebContentView.swift` wraps `WKWebView` and is the detail content —
+the sidebar **never swaps it**. Selecting a sidebar item pushes a `navigate` event
+into the page; React changes screen internally. The contract:
 
-- `./Scripts/build-app.sh` requires Apple command line tools/Xcode (`xcodebuild`, `plutil`, `actool`, `iconutil`, optional `codesign`) and writes the Xcode build log to `/tmp/${APP_NAME}-xcodebuild.log`.
-- `APP_NAME`, `BUNDLE_IDENTIFIER`, `CONFIGURATION`, `MIN_SYSTEM_VERSION`, `VERSION`, `BUILD`, `DERIVED_DATA_PATH`, and `OUTPUT_DIR` can override packaging defaults. `APP_NAME` is also used as the xcodebuild scheme and executable lookup name, so keep it aligned with the package product/scheme.
-- There are two plist sources: `Sources/EmbeddedInfo.plist` is linked into the executable for direct SwiftPM/Xcode Run behavior, while `Resources/Info.plist.template` is used when producing the `.app` bundle.
-- `Package.swift` embeds `Sources/EmbeddedInfo.plist` through linker `unsafeFlags`; do not move or rename that plist without updating the linker path.
-- `swift test` currently warns that `Sources/EmbeddedInfo.plist` is unhandled; that file is intentionally not a package resource because it is consumed by the linker flags.
+- **Swift → JS** (`window.__native`, defined by `WebBridge.bootstrapScript`):
+  `navigate(id)`, `setTheme("light"|"dark")`, `setInsets(top, bottom)`.
+- **JS → Swift**: `postMessage({ type: "ready" })` after React mounts; Swift then
+  flushes state.
+- **Screen ids are `Screen` rawValues** (`loremIpsum`, `dolorSit`) — matched in
+  `Web/src/App.tsx`. A test guards this contract.
 
-## App Icon Pipeline
+`AppSchemeHandler` serves the bundled app over `app://local/` in RELEASE; DEBUG
+loads the Vite dev server.
 
-- Source art: `Resources/AppIcon.icon/Assets/` contains the SVG sources
-  (`01-background.svg`, `02-frame 3.svg`, `03-asterisk.svg`).
-- Build script (`./Scripts/build-app.sh`) compiles these via `actool` into:
-  - `AppIcon.icns` — legacy icon format
-  - `Assets.car` — asset catalog format
-- Both are embedded in `Contents/Resources/` of the built `.app` bundle.
-- To update the icon: edit the SVG sources in `Resources/AppIcon.icon/Assets/`,
-  then rebuild with `make build`.
+## Build, Test, and Development Commands
+
+- `make web-dev` (one terminal) + `make run` (another) — DEBUG dev loop with web
+  hot reload (`localhost:5173`).
+- `make run-release` — builds the web app, bundles it, runs the RELEASE `.app`.
+- `make web` / `make web-install` — build / install the `Web/` project.
+- `make test` (xcodebuild) and `swift test` (SPM) — same Swift tests, two systems;
+  keep both green. One SPM test: `swift test --filter <name>`.
+- `make project` — regenerate the `.xcodeproj`. `make clean` — remove build output.
+
+## Coding Style & Naming Conventions
+
+Swift 6 language mode + strict concurrency (`swiftLanguageModes: [.v6]`), macOS 26
+target; no SwiftLint/SwiftFormat — match 4-space indent, `UpperCamelCase` types,
+`@MainActor` on AppKit-touching types, `@AppStorage` keys via `SettingsStorageKey`.
+Web is TypeScript `strict`; styling is hand-rolled macOS design tokens in
+`Web/src/theme.css` (no UI framework) so the web matches native.
+
+## Testing Guidelines
+
+Swift Testing (`@Suite`/`@Test`) in `Tests/SwiftUITemplateTests/`, with
+`@testable import SwiftUITemplate` (so `ENABLE_TESTABILITY` stays on in Debug).
+`swift test` emits an expected "unhandled file" warning for `EmbeddedInfo.plist`
+(it's consumed by linker flags, not as a resource).
+
+## Commit & Pull Request Guidelines
+
+Commit subjects are short, sentence-case, imperative or descriptive ("Lock base
+features") — no conventional-commit prefixes. No PR template. Commit `project.yml`,
+never the generated `.xcodeproj` or built `Resources/web`.

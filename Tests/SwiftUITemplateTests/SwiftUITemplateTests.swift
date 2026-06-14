@@ -49,25 +49,46 @@ struct ColorSchemeModeTests {
 
 @Suite("Screen Tests")
 struct ScreenTests {
-    @Test("loremIpsum and dolorSit are distinct")
+    @Test("desk and studio are distinct")
     func distinctCases() {
-        #expect(Screen.loremIpsum != Screen.dolorSit)
+        #expect(Screen.desk != Screen.studio)
     }
 
-    @Test("loremIpsum hashValue matches loremIpsum")
-    func loremIpsumHashable() {
+    @Test("desk hashValue matches desk")
+    func deskHashable() {
         var hashSet = Set<Screen>()
-        hashSet.insert(.loremIpsum)
-        #expect(hashSet.contains(.loremIpsum))
-        #expect(!hashSet.contains(.dolorSit))
+        hashSet.insert(.desk)
+        #expect(hashSet.contains(.desk))
+        #expect(!hashSet.contains(.studio))
     }
 
-    @Test("dolorSit hashValue matches dolorSit")
-    func dolorSitHashable() {
+    @Test("studio hashValue matches studio")
+    func studioHashable() {
         var hashSet = Set<Screen>()
-        hashSet.insert(.dolorSit)
-        #expect(hashSet.contains(.dolorSit))
-        #expect(!hashSet.contains(.loremIpsum))
+        hashSet.insert(.studio)
+        #expect(hashSet.contains(.studio))
+        #expect(!hashSet.contains(.desk))
+    }
+
+    @Test("raw values match the web bridge contract")
+    func rawValueContract() {
+        // These strings are the screen ids / routes the web app keys on
+        // (steward-app/src/Steward.jsx); changing them silently breaks sidebar
+        // navigation.
+        #expect(Screen.desk.rawValue == "desk")
+        #expect(Screen.carrying.rawValue == "carrying")
+        #expect(Screen.meetings.rawValue == "meetings")
+        #expect(Screen.roadmap.rawValue == "roadmap")
+        #expect(Screen.vault.rawValue == "vault")
+        #expect(Screen.studio.rawValue == "studio")
+        #expect(Screen.sources.rawValue == "sources")
+        #expect(Screen.log.rawValue == "log")
+        #expect(Screen.settings.rawValue == "settings")
+        #expect(Screen(rawValue: "desk") == .desk)
+        #expect(Screen(rawValue: "carrying") == .carrying)
+        #expect(Screen(rawValue: "vault") == .vault)
+        #expect(Screen(rawValue: "studio") == .studio)
+        #expect(Screen.allCases.count == 9)
     }
 }
 
@@ -88,16 +109,6 @@ struct SortModeTests {
     }
 }
 
-@Suite("DetailScreen Tests")
-struct DetailScreenTests {
-    @Test("body renders title and message")
-    @MainActor
-    func bodyRendersTitleAndMessage() {
-        let screen = DetailScreen(title: "Test Title", message: "Test Message")
-        _ = screen.body
-    }
-}
-
 @Suite("ContentView Tests")
 struct ContentViewTests {
     @Test("body can be evaluated")
@@ -110,19 +121,21 @@ struct ContentViewTests {
         ))
         _ = content.body
     }
+}
 
-    @Test("detailView shows Lorem Ipsum when selection is nil")
+@Suite("WebContentView Tests")
+struct WebContentViewTests {
+    @Test("carries the screen id, theme, and insets it is given")
     @MainActor
-    func detailViewNilSelection() {
-        let content = ContentView(colorSchemeMode: .constant(.system))
-        _ = content.detailView
-    }
-
-    @Test("detailView shows Dolor Sit when selection is dolorSit")
-    @MainActor
-    func detailViewDolorSit() {
-        let content = ContentView(colorSchemeMode: .constant(.system), initialSelection: .dolorSit)
-        _ = content.detailView
+    func storesInputs() {
+        let view = WebContentView(
+            screenID: Screen.desk.rawValue,
+            colorScheme: .dark,
+            safeAreaInsets: EdgeInsets(top: 52, leading: 0, bottom: 0, trailing: 0)
+        )
+        #expect(view.screenID == "desk")
+        #expect(view.colorScheme == .dark)
+        #expect(view.safeAreaInsets.top == 52)
     }
 }
 

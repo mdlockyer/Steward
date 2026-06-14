@@ -85,6 +85,15 @@ targets:
           # Not a runtime resource — Xcode would otherwise try to copy
           # it into the bundle.
           - "Info.plist.template"
+          # Built web app — added below as a folder reference instead, so the
+          # bundle picks up generated contents at build time without a regen.
+          - "web"
+      # The React app's build output (Vite -> Resources/web via `make web`).
+      # `type: folder` makes this a blue folder reference: Xcode copies the
+      # directory as-is at build time, so `make web` after project generation
+      # still lands in the bundle. AppSchemeHandler serves it over app://local/.
+      - path: Resources/web
+        type: folder
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.SwiftUITemplate
@@ -123,6 +132,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.SwiftUITemplateTests
+        # Test bundles need an Info.plist to code sign; let Xcode synthesize one.
+        GENERATE_INFOPLIST_FILE: YES
 
 schemes:
 

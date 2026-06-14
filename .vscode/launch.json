@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Steward}",
+            "name": "Debug SwiftUITemplate",
+            "target": "SwiftUITemplate",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug SwiftUITemplate"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Steward}",
+            "name": "Release SwiftUITemplate",
+            "target": "SwiftUITemplate",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release SwiftUITemplate"
+        }
+    ]
+}

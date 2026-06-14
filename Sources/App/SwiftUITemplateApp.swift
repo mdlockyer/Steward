@@ -122,6 +122,11 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
             window.setContentSize(NSSize(width: 960, height: 640))
             window.center()
         }
+        // The web content owns its own page header (large title + contextual
+        // subtitle + filter), so the native window title would just duplicate it.
+        // Keep the semantic title (Window menu, Mission Control) but hide the
+        // chrome text. The toolbar (appearance picker) and traffic lights stay.
+        window.titleVisibility = .hidden
     }
 
     private func removeEditMenu() {
