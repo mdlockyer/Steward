@@ -25,6 +25,10 @@ struct SwiftUITemplateApp: App {
                     applyColorScheme()
                 }
         }
+        // Hollow shell: no title bar or backing material — just the traffic
+        // lights floating over the full-bleed web app, which owns all its own
+        // chrome (sidebar, headers, toolbars).
+        .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .windowArrangement) {
             }
@@ -117,16 +121,18 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
 
     private func configureMainWindow() {
         guard let window = NSApp.windows.first(where: { $0.canBecomeMain }) else { return }
-        window.minSize = NSSize(width: 760, height: 420)
-        if window.frame.width < 960 || window.frame.height < 640 {
-            window.setContentSize(NSSize(width: 960, height: 640))
+        window.minSize = NSSize(width: 820, height: 520)
+        if window.frame.width < 1100 || window.frame.height < 720 {
+            window.setContentSize(NSSize(width: 1100, height: 720))
             window.center()
         }
-        // The web content owns its own page header (large title + contextual
-        // subtitle + filter), so the native window title would just duplicate it.
-        // Keep the semantic title (Window menu, Mission Control) but hide the
-        // chrome text. The toolbar (appearance picker) and traffic lights stay.
+        // Hollow shell: the web app fills the window edge-to-edge and provides
+        // every bit of chrome. Strip the native title bar to bare traffic lights,
+        // let content draw full-bleed beneath them, and keep the window draggable
+        // from its background since there's no title bar strip to grab.
         window.titleVisibility = .hidden
+        window.titlebarAppearsTransparent = true
+        window.isMovableByWindowBackground = true
     }
 
     private func removeEditMenu() {
