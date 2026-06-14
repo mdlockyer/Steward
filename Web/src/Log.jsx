@@ -12,12 +12,6 @@ import { Avatar, TypeChip, EmptyState } from "./components.jsx";
 export default function Log({ log }) {
   return (
     <>
-      <div className="sw-top">
-        <div>
-          <h1 className="sw-h1">Log</h1>
-          <p className="sw-sub">Closed loops — the part of what you were carrying that has resolved. Each keeps its full trace: sources, steps, and any corrections you made.</p>
-        </div>
-      </div>
       <div className="sw-scroll">
         {log.length === 0 ? (
           <EmptyState icon={Archive} title="Nothing closed yet">

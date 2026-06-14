@@ -17,12 +17,6 @@ export default function Roadmap({ roadmap, onOpenLoop }) {
 
   return (
     <>
-      <div className="sw-top">
-        <div>
-          <h1 className="sw-h1">Roadmap</h1>
-          <p className="sw-sub">Steward doesn't own the plan — it owns noticing when reality and the plan disagree. Slips and broken dependencies surface as loops you can reconcile.</p>
-        </div>
-      </div>
       <div className="sw-scroll">
         {(slipping > 0 || atRisk > 0) && (
           <div className="sw-fire" style={{ margin: "14px 0 0", borderColor: "rgba(176,106,0,.4)", background: "linear-gradient(180deg,rgba(255,159,10,.08),rgba(255,159,10,.02))" }}>

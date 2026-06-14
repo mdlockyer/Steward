@@ -6,9 +6,9 @@ import {
 import { CSS } from "./styles.js";
 import {
   SEED_LOOPS, SEED_LOG, SEED_MEETINGS, SEED_MEMORY, SEED_ROADMAP, SEED_VAULT,
-  person, priorityOf, MOVE_TYPE,
+  SEED_NOTIFICATIONS, SCREEN_INFO, person, priorityOf, MOVE_TYPE,
 } from "./data.js";
-import { MoveInspector } from "./components.jsx";
+import { MoveInspector, NotifBell, NotifPopover, QuickInfo } from "./components.jsx";
 import Desk from "./Desk.jsx";
 import Carrying, { LoopDetail } from "./Carrying.jsx";
 import Meetings, { MeetingDetail } from "./Meetings.jsx";
@@ -53,7 +53,10 @@ export default function Steward() {
   const [memory] = useState(SEED_MEMORY);
   const [vault, setVault] = useState(SEED_VAULT);
   const [vaultSel, setVaultSel] = useState("n-readme");
-  const [fireAck, setFireAck] = useState(false);
+
+  const [notifs, setNotifs] = useState(SEED_NOTIFICATIONS);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [quickOpen, setQuickOpen] = useState(false);
 
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
@@ -94,6 +97,18 @@ export default function Steward() {
     window.webkit.messageHandlers.native.postMessage({ type: "route", id: route });
   }, [embedded, route]);
 
+  // Inside the native shell, surface the top unread fire as a real macOS
+  // notification once on launch (Reactive mode: the fire comes to find you).
+  const notifiedRef = useRef(false);
+  useEffect(() => {
+    if (!embedded || notifiedRef.current) return;
+    const fire = SEED_NOTIFICATIONS.find((n) => n.kind === "fire" && !n.read);
+    if (fire && window.__native?.notify) {
+      notifiedRef.current = true;
+      window.__native.notify({ title: "Steward · " + fire.title, body: fire.body });
+    }
+  }, [embedded]);
+
   /* ------------------------------ toast ---------------------------------- */
   const showToast = (msg, action) => {
     clearTimeout(toastTimer.current);
@@ -106,13 +121,33 @@ export default function Steward() {
   const openMove = openLoop && openMode === "move" ? openLoop.move : null;
   const openMeeting = useMemo(() => meetings.find((m) => m.id === openMeetingId) || null, [meetings, openMeetingId]);
 
-  const fireLoop = useMemo(() => loops.find((l) => l.type === "fire" && l.interrupt), [loops]);
-  const interruptActive = !!fireLoop && !fireAck && !openId && !openMeetingId;
-
   const deskCount = loops.filter((l) => l.move).length;
   const fireCount = loops.filter((l) => l.type === "fire" && l.interrupt).length;
   const upcomingCount = meetings.filter((m) => m.status === "upcoming").length;
   const roadmapRisk = SEED_ROADMAP.filter((r) => r.status !== "onTrack").length;
+  const unread = notifs.filter((n) => !n.read).length;
+
+  // Quick Info: auto-expand the first few visits to each screen, then keep it
+  // collapsed (one click to reopen). A manual collapse is remembered per screen.
+  useEffect(() => {
+    let seen = {};
+    try { seen = JSON.parse(localStorage.getItem("sw.quickinfo") || "{}"); } catch { /* ignore */ }
+    if ((seen[route] || 0) < 3) {
+      setQuickOpen(true);
+      seen[route] = (seen[route] || 0) + 1;
+      try { localStorage.setItem("sw.quickinfo", JSON.stringify(seen)); } catch { /* ignore */ }
+    } else setQuickOpen(false);
+  }, [route]);
+
+  // Close the notification popover on outside-click / Escape.
+  useEffect(() => {
+    if (!notifOpen) return;
+    const onDoc = (e) => { if (!e.target.closest(".sw-notif-pop") && !e.target.closest(".sw-bell")) setNotifOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setNotifOpen(false); };
+    window.addEventListener("mousedown", onDoc);
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("mousedown", onDoc); window.removeEventListener("keydown", onKey); };
+  }, [notifOpen]);
 
   /* --------------------- Move spine state machine ------------------------ */
   const patchNodes = (loopId, fn) =>
@@ -309,6 +344,23 @@ export default function Steward() {
     setRoute("studio"); setOpenId(null);
   };
 
+  /* notifications + quick info */
+  const markAllRead = () => setNotifs((p) => p.map((n) => ({ ...n, read: true })));
+  const openNotif = (n) => {
+    setNotifs((p) => p.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
+    setNotifOpen(false);
+    const loop = loops.find((l) => l.id === n.loopId);
+    if (loop?.move) { setRoute("desk"); openDeskMove(loop.id); }
+    else if (loop) { setRoute("carrying"); setOpenId(loop.id); setOpenMode("loop"); }
+  };
+  const toggleQuick = () => setQuickOpen((v) => {
+    const next = !v;
+    if (!next) {
+      try { const s = JSON.parse(localStorage.getItem("sw.quickinfo") || "{}"); s[route] = 99; localStorage.setItem("sw.quickinfo", JSON.stringify(s)); } catch { /* ignore */ }
+    }
+    return next;
+  });
+
   const NAV_MAIN = [
     { id: "desk", label: "Desk", ic: Inbox, count: deskCount, fire: fireCount > 0 },
     { id: "carrying", label: "Carrying", ic: Layers, count: loops.length },
@@ -328,39 +380,26 @@ export default function Steward() {
       {/* The sidebar is always present — in the browser and inside the native
           hollow shell alike. The native window contributes only traffic lights. */}
       <aside className="sw-rail">
-        <div className="sw-brand"><div className="sw-mark"><span /></div><b>Steward</b></div>
+        <div className="sw-brand">
+          <div className="sw-mark"><span /></div><b>Steward</b>
+          <span className="sw-brand-tools">
+            <span className="sw-pulse" title="Listening · swept 4m ago" />
+            <NotifBell count={unread} open={notifOpen} onClick={() => setNotifOpen((v) => !v)} />
+          </span>
+        </div>
+        {notifOpen && <NotifPopover items={notifs} onOpen={openNotif} onClear={markAllRead} />}
         <nav className="sw-nav" aria-label="Sections">
           {NAV_MAIN.map((it) => <NavItem key={it.id} it={it} route={route} onGo={go} />)}
           <div className="sw-nav-sec">Tools</div>
           {NAV_TOOLS.map((it) => <NavItem key={it.id} it={it} route={route} onGo={go} />)}
         </nav>
         <div className="sw-rail-foot">
+          <QuickInfo text={SCREEN_INFO[route] || ""} open={quickOpen} onToggle={toggleQuick} />
           <button className="sw-navitem" onClick={() => setSettingsOpen(true)}><Settings2 /> <span className="sw-navlabel">Settings</span></button>
-          <div className="sw-listen"><span className="sw-pulse" /> Listening · swept 4m ago</div>
-          <span className="sw-sample">Sample data · demo</span>
         </div>
       </aside>
 
       <main className="sw-main">
-        {interruptActive && (
-          <div className="sw-fire">
-            <div className="sw-fire-top">
-              <span className="sw-fire-ic"><ShieldAlert size={16} /></span>
-              <div className="sw-fire-main">
-                <div className="sw-fire-k">Reactive · a fire needs you</div>
-                <div className="sw-fire-t">{fireLoop.title}</div>
-                <div className="sw-fire-sub">{fireLoop.context}</div>
-              </div>
-              <div className="sw-fire-act">
-                <button className="sw-btn sw-btn-red" onClick={() => { setRoute("desk"); setFireAck(true); openDeskMove(fireLoop.id); }}>
-                  Open the Move <ArrowRight size={14} />
-                </button>
-                <button className="sw-btn sw-btn-text" onClick={() => setFireAck(true)} style={{ color: "var(--ink-2)" }}>Later</button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {route === "desk" && (
           openMove
             ? <MoveInspector loop={openLoop} m={openMove} backLabel="Desk" onBack={backFromMove} onStudio={toStudio} actions={boundActions} />

@@ -22,12 +22,6 @@ export default function Sources({ memory }) {
   const [embed, setEmbed] = useState(EMBEDDING_PROVIDERS.find((p) => p.active)?.id || EMBEDDING_PROVIDERS[0].id);
   return (
     <>
-      <div className="sw-top">
-        <div>
-          <h1 className="sw-h1">Sources</h1>
-          <p className="sw-sub">What Steward listens to, over MCP. It only reads and reasons — every outbound or write step is approval-gated inside the Move.</p>
-        </div>
-      </div>
       <div className="sw-scroll">
         {/* connected sources */}
         <div className="sw-group" style={{ marginTop: 14 }}>

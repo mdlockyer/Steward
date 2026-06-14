@@ -687,3 +687,44 @@ export const FILE_KIND = {
   xlsx: { label: "Sheet",    color: "var(--green)" },
   png:  { label: "Image",    color: "var(--amber)" },
 };
+
+/* ----------------------------- screen blurbs ----------------------------- */
+/* The old per-screen sub-header text, now surfaced in the sidebar's collapsible
+   Quick Info rather than as a hero subtitle. */
+export const SCREEN_INFO = {
+  desk: "What needs you now, ranked by severity × needle-impact. Confidence is a quality signal, not the priority. Nothing is sent or filed without your approval.",
+  carrying: "Everything still open — what you're carrying across the days. Each loop has an owner, a counterparty, a state, and an age. The Log is only the part that's closed.",
+  meetings: "Prep before, capture during, fan-out after. Commitments become tracked loops; decisions land in a log.",
+  roadmap: "Steward doesn't own the plan — it notices when reality and the plan disagree, surfacing slips and broken dependencies as loops to reconcile.",
+  vault: "Your Obsidian vault — read, edit, and organize notes, indexed for retrieval so Studio can ground its answers in it.",
+  studio: "Work a problem with Steward in real time. The work becomes a Move as you go — every send or file step waits for your approval.",
+  sources: "What Steward listens to, over MCP. It only reads and reasons — every outbound or write step is approval-gated inside the Move.",
+  log: "Closed loops — the part of what you were carrying that has resolved. Each keeps its full trace.",
+  settings: "Providers, keys, and app preferences.",
+};
+
+/* ----------------------------- notifications ----------------------------- */
+/* Replaces the inline reactive banner: fires and other alerts collect in a
+   top-corner notification center (and, in the native shell, fire a real macOS
+   notification). Each points back at the loop/Move it concerns. */
+export const NOTIF_KIND = {
+  fire:  { label: "Fire",   color: "var(--red)"    },
+  slip:  { label: "Slip",   color: "var(--amber)"  },
+  nudge: { label: "Nudge",  color: "var(--amber)"  },
+  reply: { label: "Reply",  color: "var(--green)"  },
+};
+
+export const SEED_NOTIFICATIONS = [
+  { id: "nt-fire", kind: "fire", severity: 92, loopId: "lp-fire", when: "2m ago", read: false,
+    title: "Capture pipeline is corrupting frames",
+    body: "3 of 8 rigs and widening — the corrupted frames are reaching the perf dataset for Monday's board deck." },
+  { id: "nt-codec", kind: "slip", severity: 78, loopId: "lp-codec", when: "3h ago", read: false,
+    title: "Codec decision slipped — Q3 GA at risk",
+    body: "Marcus signalled early July. Steward drafted a plan reconciliation." },
+  { id: "nt-budget", kind: "nudge", severity: 70, loopId: "lp-budget", when: "1h ago", read: false,
+    title: "Budget ask is overdue with Finance",
+    body: "6 days, past your 3-day SLA. Steward assembled the numbers and a re-pitch." },
+  { id: "nt-firmware", kind: "reply", severity: 42, loopId: "lp-firmware", when: "Yesterday", read: true,
+    title: "Dmitri replied on the firmware bump",
+    body: "“this week” — the thermal mitigation is unblocked." },
+];

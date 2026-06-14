@@ -43,6 +43,16 @@ enum WebBridge {
           style.setProperty('--safe-top', top + 'px');
           style.setProperty('--safe-bottom', bottom + 'px');
           emit('native:insets', { top: top, bottom: bottom });
+        },
+        // web -> native: post a real macOS notification (UNUserNotificationCenter).
+        notify: function (payload) {
+          try {
+            window.webkit.messageHandlers.native.postMessage({
+              type: 'notify',
+              title: (payload && payload.title) || 'Steward',
+              body: (payload && payload.body) || ''
+            });
+          } catch (e) { /* not embedded */ }
         }
       };
     })();

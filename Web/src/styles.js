@@ -31,7 +31,7 @@ export const CSS = `
 .sw-mono{font-family:var(--mono);font-feature-settings:"tnum"}
 
 /* ---- sidebar ---- */
-.sw-rail{width:240px;flex:0 0 240px;background:var(--surface-2);
+.sw-rail{width:240px;flex:0 0 240px;background:var(--surface-2);position:relative;
   border-right:1px solid var(--hair);display:flex;flex-direction:column;padding:18px 12px 12px}
 .sw-brand{display:flex;align-items:center;gap:9px;padding:6px 8px 16px}
 .sw-mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(160deg,#1d1d1f,#3a3a3e);
@@ -489,11 +489,76 @@ export const CSS = `
   background:var(--green-soft);border-radius:5px;padding:2px 6px}
 .sw-cite-snip{font-size:12px;color:var(--ink-2);margin-top:5px;line-height:1.5;font-style:italic}
 
+/* =================== redesigned chrome (no hero headers) =================== */
+
+/* brand row now carries the live indicator + notification bell on the right */
+.sw-brand{justify-content:flex-start}
+.sw-brand-tools{margin-left:auto;display:flex;align-items:center;gap:6px}
+.sw-bell{position:relative;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2);transition:background .12s,color .12s}
+.sw-bell:hover{background:rgba(0,0,0,.05);color:var(--ink)}
+.sw-bell svg{width:17px;height:17px}
+.sw-bell[aria-expanded="true"]{background:rgba(0,0,0,.06);color:var(--ink)}
+.sw-badge{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:9px;
+  background:var(--red);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;
+  box-shadow:0 0 0 2px var(--surface-2);font-variant-numeric:tabular-nums}
+
+/* notification center popover, anchored under the bell */
+@keyframes sw-pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sw-notif-pop{position:absolute;z-index:90;top:50px;left:12px;width:344px;max-height:62vh;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:var(--sh-pop);
+  padding:6px;animation:sw-pop .14s ease both}
+.sw-notif-pop::-webkit-scrollbar{width:8px}.sw-notif-pop::-webkit-scrollbar-thumb{background:rgba(0,0,0,.14);border-radius:8px;border:2px solid var(--surface)}
+.sw-notif-head{display:flex;align-items:center;justify-content:space-between;padding:7px 9px 7px}
+.sw-notif-head b{font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.sw-notif-clear{font-size:11.5px;color:var(--accent);font-weight:600;padding:3px 6px;border-radius:6px}
+.sw-notif-clear:hover{background:var(--accent-soft)}
+.sw-notif-item{display:flex;gap:10px;padding:10px;border-radius:10px;width:100%;text-align:left;align-items:flex-start;transition:background .12s;position:relative}
+.sw-notif-item:hover{background:rgba(0,0,0,.045)}
+.sw-notif-dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex:0 0 auto;box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+.sw-notif-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.sw-notif-t{font-size:13px;font-weight:600;letter-spacing:-0.012em;line-height:1.35}
+.sw-notif-b{font-size:12px;color:var(--ink-2);margin-top:3px;line-height:1.45}
+.sw-notif-when{font-size:11px;color:var(--ink-3);margin-top:4px;font-variant-numeric:tabular-nums}
+.sw-notif-unread{position:absolute;top:12px;right:11px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.sw-notif-empty{padding:30px 14px;text-align:center;color:var(--ink-3);font-size:12.5px}
+.sw-notif-empty svg{display:block;margin:0 auto 8px;color:var(--ink-3)}
+
+/* sidebar footer: collapsible Quick Info, then Settings pinned to the bottom */
+.sw-rail-foot{margin-top:auto;padding:10px 4px 2px;border-top:1px solid var(--hair);display:flex;flex-direction:column;gap:8px}
+.sw-quick{border:1px solid var(--hair);border-radius:10px;background:var(--surface);overflow:hidden}
+.sw-quick-head{display:flex;align-items:center;gap:7px;width:100%;text-align:left;padding:8px 10px;
+  font-size:11.5px;font-weight:600;color:var(--ink-2);transition:color .12s}
+.sw-quick-head:hover{color:var(--ink)}
+.sw-quick-head>svg:first-child{width:13px;height:13px;color:var(--ink-3);flex:0 0 auto}
+.sw-quick-chev{margin-left:auto;color:var(--ink-3);transition:transform .16s}
+.sw-quick[data-open="true"] .sw-quick-chev{transform:rotate(180deg)}
+.sw-quick-body{padding:0 10px 10px;animation:sw-quick-in .18s ease both}
+@keyframes sw-quick-in{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}
+.sw-quick-text{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.sw-quick-demo{margin-top:8px;font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3)}
+
+/* content top spacing now that the hero header is gone */
+.sw-main{padding-top:8px}
+.sw-seg{margin-top:16px}
+
 /* ---- embedded in the native macOS shell ---- */
 .sw-native, .sw-native body{background:transparent}
 .sw-native #root{display:block;padding:0;min-height:100%}
 .sw-native .sw-root{max-width:none;width:100%;height:100vh;border-radius:0;border:none;box-shadow:none}
-/* The native hollow shell overlays its traffic lights on the top-left of the
-   sidebar; drop the brand down so the lights sit in a clean gap above it. */
-.sw-native .sw-rail{padding-top:40px}
+/* The native hollow shell overlays a 34px transparent drag strip (the
+   "titlebar") plus traffic lights across the top. Pad both columns by that much
+   so the brand clears the lights and nothing interactive sits under the strip. */
+.sw-native .sw-rail{padding-top:34px}
+.sw-native .sw-main{padding-top:34px}
+
+/* Native-app feel: chrome (nav, labels, list rows, cards, headers) isn't
+   selectable and shows the arrow cursor; only genuine content and inputs are
+   selectable — text fields, the markdown editor, the note reader, and Studio
+   chat. Scoped to the embedded shell so the browser stays normally selectable. */
+.sw-native{user-select:none;-webkit-user-select:none}
+.sw-native .sw-root{cursor:default}
+.sw-native input,.sw-native textarea,.sw-native [contenteditable="true"],
+.sw-native .cm-editor,.sw-native .cm-content,.sw-native .md-doc,
+.sw-native .vt-read,.sw-native .st-say,.sw-native .st-user div{
+  -webkit-user-select:text;user-select:text;cursor:auto}
 `;

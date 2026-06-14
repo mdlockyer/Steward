@@ -29,6 +29,8 @@ struct SwiftUITemplateApp: App {
         // lights floating over the full-bleed web app, which owns all its own
         // chrome (sidebar, headers, toolbars).
         .windowStyle(.hiddenTitleBar)
+        // First-run default; `configureMainWindow` fits it to the actual display.
+        .defaultSize(width: 1728, height: 1117)
         .commands {
             CommandGroup(replacing: .windowArrangement) {
             }
@@ -121,9 +123,25 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
 
     private func configureMainWindow() {
         guard let window = NSApp.windows.first(where: { $0.canBecomeMain }) else { return }
-        window.minSize = NSSize(width: 820, height: 520)
-        if window.frame.width < 1100 || window.frame.height < 720 {
-            window.setContentSize(NSSize(width: 1100, height: 720))
+        window.minSize = NSSize(width: 900, height: 600)
+
+        // Default to a 16" MacBook Pro (M4) — 1728×1117 logical points — sized to
+        // fit the current display (so it's a window, never fullscreen). Keep that
+        // 16:10.34 aspect if the screen is too small to hold the full size.
+        let ratio: CGFloat = 1728.0 / 1117.0
+        var target = NSSize(width: 1728, height: 1117)
+        if let visible = (window.screen ?? NSScreen.main)?.visibleFrame.size {
+            let maxW = visible.width * 0.94
+            let maxH = visible.height * 0.94
+            var w = min(target.width, maxW)
+            var h = w / ratio
+            if h > maxH { h = maxH; w = h * ratio }
+            target = NSSize(width: w.rounded(), height: h.rounded())
+        }
+        // Adopt the new default unless the user has already chosen a larger window.
+        let current = window.frame.size
+        if current.width < target.width - 8 || current.height < target.height - 8 {
+            window.setContentSize(target)
             window.center()
         }
         // Hollow shell: the web app fills the window edge-to-edge and provides

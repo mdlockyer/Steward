@@ -32,12 +32,6 @@ export default function Carrying({ loops, seg, setSeg, onOpen }) {
 
   return (
     <>
-      <div className="sw-top">
-        <div>
-          <h1 className="sw-h1">Carrying</h1>
-          <p className="sw-sub">Everything still open — what you're carrying across the days. Each loop has an owner, a counterparty, a state, and an age. The Log is only the part of this that has closed.</p>
-        </div>
-      </div>
       <div className="sw-seg" role="group" aria-label="Filter loops">
         {segs.map(([k, l]) => (
           <button key={k} aria-pressed={seg === k} onClick={() => setSeg(k)}>

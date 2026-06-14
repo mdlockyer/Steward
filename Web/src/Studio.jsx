@@ -58,7 +58,7 @@ const STUDIO_CSS = `
 .st-adjust textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)}
 
 /* header */
-.st-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:26px 32px 12px}
+.st-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 32px 10px;min-height:30px}
 .st-head .sw-h1{font-size:26px;font-weight:600;letter-spacing:-0.025em}
 .st-head .sw-sub{font-size:13.5px;color:var(--ink-2);margin-top:5px;max-width:560px}
 .st-head-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
@@ -386,10 +386,7 @@ export default function Studio({ seed, model = "claude-sonnet-4-6", onCrystalliz
   return (
     <div className="st-wrap">
       <div className="st-head">
-        <div>
-          <h1 className="sw-h1">Studio</h1>
-          <p className="sw-sub">Work a problem with Steward in real time. The work becomes a Move as you go — every send or file step waits for your approval.</p>
-        </div>
+        <div />
         <div className="st-head-actions">
           {mode === "sim" ? (
             <span className="st-model sim"><span className="st-live" /> Simulated</span>

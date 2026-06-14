@@ -3,8 +3,9 @@ import {
   ChevronLeft, ChevronRight, Check, Circle, Clock, Send, Search, Link2, Radio,
   RotateCw, Sparkles, Ticket, MessageSquare, PenLine, AlertTriangle, Users,
   FileText, Layers, DollarSign, ArrowRight, ShieldAlert, Lightbulb,
+  Bell, Info, ChevronDown, CheckCheck,
 } from "lucide-react";
-import { PEOPLE, person, MOVE_TYPE, sevBucket } from "./data.js";
+import { PEOPLE, person, MOVE_TYPE, sevBucket, NOTIF_KIND } from "./data.js";
 
 /* ============================================================================
    Shared primitives + the Move spine. The spine, its gates, and the
@@ -337,4 +338,58 @@ function SpineNode({ n, isLast, fbOpen, onFbToggle, fbChips, setFbChips, fbText,
 function ownerIdByName(name) {
   const hit = Object.values(PEOPLE).find((p) => p.name === name);
   return hit ? hit.id : "dmitri";
+}
+
+/* ------------------------- notifications + quick info -------------------- */
+export function NotifBell({ count, open, onClick }) {
+  return (
+    <button className="sw-bell" aria-expanded={open} aria-label="Notifications" onClick={onClick}>
+      <Bell />
+      {count > 0 && <span className="sw-badge">{count > 9 ? "9+" : count}</span>}
+    </button>
+  );
+}
+
+export function NotifPopover({ items, onOpen, onClear }) {
+  const unread = items.filter((n) => !n.read).length;
+  return (
+    <div className="sw-notif-pop" role="dialog" aria-label="Notifications">
+      <div className="sw-notif-head">
+        <b>Notifications</b>
+        {unread > 0 && <button className="sw-notif-clear" onClick={onClear}>Mark all read</button>}
+      </div>
+      {items.length === 0 ? (
+        <div className="sw-notif-empty"><CheckCheck size={22} />You're all caught up.</div>
+      ) : items.map((n) => {
+        const k = NOTIF_KIND[n.kind] || { color: "var(--ink-3)" };
+        return (
+          <button key={n.id} className="sw-notif-item" onClick={() => onOpen(n)}>
+            <span className="sw-notif-dot" style={{ background: k.color }} />
+            <span className="sw-notif-main">
+              <span className="sw-notif-t">{n.title}</span>
+              <span className="sw-notif-b">{n.body}</span>
+              <span className="sw-notif-when">{n.when}</span>
+            </span>
+            {!n.read && <span className="sw-notif-unread" />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function QuickInfo({ text, open, onToggle }) {
+  return (
+    <div className="sw-quick" data-open={open}>
+      <button className="sw-quick-head" onClick={onToggle} aria-expanded={open}>
+        <Info /> Quick info <ChevronDown className="sw-quick-chev" size={14} />
+      </button>
+      {open && (
+        <div className="sw-quick-body">
+          <div className="sw-quick-text">{text}</div>
+          <div className="sw-quick-demo">Sample data · demo</div>
+        </div>
+      )}
+    </div>
+  );
 }

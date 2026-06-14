@@ -30,12 +30,6 @@ export default function Desk({ loops, seg, setSeg, onOpen, onDismiss }) {
 
   return (
     <>
-      <div className="sw-top">
-        <div>
-          <h1 className="sw-h1">Desk</h1>
-          <p className="sw-sub">What needs you now, ranked by severity × needle-impact. Confidence is a quality signal, not the priority. Nothing is sent or filed without your approval.</p>
-        </div>
-      </div>
       <div className="sw-seg" role="group" aria-label="Filter the Desk">
         {segs.map(([k, l]) => (
           <button key={k} aria-pressed={seg === k} onClick={() => setSeg(k)}>

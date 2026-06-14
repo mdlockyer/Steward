@@ -18,12 +18,6 @@ export default function Meetings({ meetings, onOpen }) {
   const past = meetings.filter((m) => m.status === "past").sort((a, b) => b.whenRank - a.whenRank);
   return (
     <>
-      <div className="sw-top">
-        <div>
-          <h1 className="sw-h1">Meetings</h1>
-          <p className="sw-sub">Prep before, capture during, fan-out after. Commitments become tracked loops in Carrying; decisions land in a log.</p>
-        </div>
-      </div>
       <div className="sw-scroll">
         <div className="sw-group-h">Upcoming <span className="sw-gh-n">{upcoming.length}</span></div>
         <div className="sw-group">
