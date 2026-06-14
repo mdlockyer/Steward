@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.local
+.env.*.local
+steward.config.local.json
+.DS_Store
+
+# Vite writes transient config snapshots next to vite.config.js
+vite.config.js.timestamp-*
+.DS_Store
