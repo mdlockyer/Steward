@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Inbox, Layers, Calendar, GitBranch, Sparkles, Plug, Check, Archive,
-  Settings2, ShieldAlert, ArrowRight, Notebook,
+  Settings2, ShieldAlert, ArrowRight, Notebook, Boxes,
 } from "lucide-react";
 import { CSS } from "./styles.js";
 import {
   SEED_LOOPS, SEED_LOG, SEED_MEETINGS, SEED_MEMORY, SEED_ROADMAP, SEED_VAULT,
-  SEED_NOTIFICATIONS, SCREEN_INFO, person, priorityOf, MOVE_TYPE,
+  SEED_NOTIFICATIONS, SEED_CLUSTERS, clusterStats, CLUSTER_KIND, SCREEN_INFO, person, priorityOf, MOVE_TYPE,
 } from "./data.js";
 import { MoveInspector, NotifBell, NotifPopover, QuickInfo } from "./components.jsx";
 import Desk from "./Desk.jsx";
@@ -18,6 +18,8 @@ import Sources from "./Sources.jsx";
 import Log from "./Log.jsx";
 import Studio from "./Studio.jsx";
 import Settings from "./Settings.jsx";
+import Clusters, { ClusterDetail } from "./Clusters.jsx";
+import AskBar from "./AskBar.jsx";
 
 /* ============================================================================
    STEWARD — a loops-and-Moves tool. ALL DATA IS MOCK / SAMPLE.
@@ -37,13 +39,14 @@ const DISPOSITION = {
 const trim = (s, n = 32) => (s.length > n ? s.slice(0, n) + "…" : s);
 
 export default function Steward() {
-  const [route, setRoute] = useState("desk");
+  const [route, setRoute] = useState("clusters");
   const [deskSeg, setDeskSeg] = useState("all");
   const [carrySeg, setCarrySeg] = useState("all");
   const [openId, setOpenId] = useState(null);        // loop id under inspection
   const [openMode, setOpenMode] = useState("loop");  // "loop" | "move"
   const [moveFrom, setMoveFrom] = useState("desk");  // where a Move was opened from
   const [openMeetingId, setOpenMeetingId] = useState(null);
+  const [openClusterId, setOpenClusterId] = useState(null);
   const [studioSeed, setStudioSeed] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -120,6 +123,7 @@ export default function Steward() {
   const openLoop = useMemo(() => loops.find((l) => l.id === openId) || null, [loops, openId]);
   const openMove = openLoop && openMode === "move" ? openLoop.move : null;
   const openMeeting = useMemo(() => meetings.find((m) => m.id === openMeetingId) || null, [meetings, openMeetingId]);
+  const openCluster = openClusterId ? SEED_CLUSTERS.find((c) => c.id === openClusterId) : null;
 
   const deskCount = loops.filter((l) => l.move).length;
   const fireCount = loops.filter((l) => l.type === "fire" && l.interrupt).length;
@@ -333,11 +337,12 @@ export default function Steward() {
   const vaultWiki = (target) => showToast(`No note named “${target}” in the vault yet.`);
 
   /* ----------------------------- navigation ------------------------------ */
-  const go = (r) => { setRoute(r); setOpenId(null); setOpenMeetingId(null); if (r === "studio") setStudioSeed(null); };
+  const go = (r) => { setRoute(r); setOpenId(null); setOpenMeetingId(null); setOpenClusterId(null); if (r === "studio") setStudioSeed(null); };
   const openDeskMove = (loopId) => { setOpenId(loopId); setOpenMode("move"); setMoveFrom("desk"); };
   const openLoopDetail = (loopId) => { setOpenId(loopId); setOpenMode("loop"); };
   const openMoveFromLoop = (loopId) => { setOpenId(loopId); setOpenMode("move"); setMoveFrom("loop"); };
   const openLoopFromRoadmap = (loopId) => { setRoute("carrying"); setOpenId(loopId); setOpenMode("loop"); };
+  const openLoopFromCluster = (loopId) => { setOpenClusterId(null); setRoute("carrying"); setOpenId(loopId); setOpenMode("loop"); };
   const backFromMove = () => { if (moveFrom === "loop") setOpenMode("loop"); else setOpenId(null); };
   const toStudio = (move, loop) => {
     setStudioSeed({ ...move, title: loop ? loop.title : move.title, line: loop ? loop.context : "" });
@@ -362,6 +367,7 @@ export default function Steward() {
   });
 
   const NAV_MAIN = [
+    { id: "clusters", label: "Clusters", ic: Boxes, count: SEED_CLUSTERS.length },
     { id: "desk", label: "Desk", ic: Inbox, count: deskCount, fire: fireCount > 0 },
     { id: "carrying", label: "Carrying", ic: Layers, count: loops.length },
     { id: "meetings", label: "Meetings", ic: Calendar, count: upcomingCount },
@@ -374,6 +380,51 @@ export default function Steward() {
     { id: "log", label: "Log", ic: Check, count: log.length },
   ];
 
+  /* The ask composer is contextual: its placeholder + the context it hands to
+     Studio are drawn from whatever screen you're on right now. */
+  const askCtx = (() => {
+    const cap = (arr, n = 3) => arr.filter(Boolean).slice(0, n).join(", ");
+    if (route === "clusters" && openCluster) {
+      const s = clusterStats(openCluster, { loops, vault });
+      return { label: openCluster.name, placeholder: `Ask inside ${openCluster.name}…`,
+        contextLine: `the cluster "${openCluster.name}" (${CLUSTER_KIND[openCluster.kind]?.label}). ${openCluster.summary} Open loops: ${cap(s.memberLoops.map((l) => l.title))}. People: ${cap(openCluster.people.map((p) => person(p).name))}.` };
+    }
+    if (route === "clusters") {
+      return { label: `${SEED_CLUSTERS.length} clusters`, placeholder: "Ask across your clusters…",
+        contextLine: `the Clusters board. Clusters: ${cap(SEED_CLUSTERS.map((c) => c.name), 6)}.` };
+    }
+    if (openMove) {
+      return { label: "this Move", placeholder: "Ask about this Move…",
+        contextLine: `the Move "${openLoop ? openLoop.title : openMove.title}" (type ${openMove.type}, ends in ${openMove.terminal}).` };
+    }
+    if (route === "carrying" && openLoop) {
+      return { label: trim(openLoop.title, 24), placeholder: "Ask about this loop…",
+        contextLine: `the open loop "${openLoop.title}" — state ${openLoop.state}, with ${person(openLoop.counterparty).name}, age ${openLoop.age}.` };
+    }
+    if (route === "carrying") {
+      return { label: `${loops.length} open loops`, placeholder: "Ask about your open loops…",
+        contextLine: `Carrying — your open loops: ${cap(loops.map((l) => l.title), 5)}.` };
+    }
+    if (route === "desk") {
+      return { label: "Desk", placeholder: "Ask about what needs you now…",
+        contextLine: `the Desk (what needs you, ranked by severity × needle-impact). Top: ${cap(loops.filter((l) => l.move).map((l) => l.title), 4)}.` };
+    }
+    if (route === "meetings" && openMeeting) {
+      return { label: openMeeting.title, placeholder: `Ask about ${openMeeting.title}…`, contextLine: `the meeting "${openMeeting.title}".` };
+    }
+    if (route === "meetings") return { label: "Meetings", placeholder: "Ask about your meetings…", contextLine: `your meetings — prep, capture, and commitments.` };
+    if (route === "roadmap") return { label: "Roadmap", placeholder: "Ask about the roadmap…", contextLine: `the roadmap — milestones: ${cap(SEED_ROADMAP.map((r) => r.name), 5)}.` };
+    if (route === "vault") return { label: "Vault", placeholder: "Ask about your vault…", contextLine: `your Obsidian vault of notes (indexed for retrieval).` };
+    if (route === "log") return { label: "Log", placeholder: "Ask about your closed loops…", contextLine: `the Log — closed loops with their full trace.` };
+    if (route === "sources") return { label: "Sources", placeholder: "Ask Steward anything…", contextLine: `your connected sources (over MCP).` };
+    return { label: "Steward", placeholder: "Ask Steward…", contextLine: `Steward.` };
+  })();
+
+  const askFromScreen = (text) => {
+    setStudioSeed({ ask: true, id: "ask-" + Date.now(), scopeLabel: askCtx.label, contextLine: askCtx.contextLine, question: text });
+    setRoute("studio"); setOpenId(null); setOpenClusterId(null); setOpenMeetingId(null);
+  };
+
   /* -------------------------------- render ------------------------------- */
   return (
     <div className="sw-root">
@@ -384,22 +435,31 @@ export default function Steward() {
           <div className="sw-mark"><span /></div><b>Steward</b>
           <span className="sw-brand-tools">
             <span className="sw-pulse" title="Listening · swept 4m ago" />
-            <NotifBell count={unread} open={notifOpen} onClick={() => setNotifOpen((v) => !v)} />
           </span>
         </div>
-        {notifOpen && <NotifPopover items={notifs} onOpen={openNotif} onClear={markAllRead} />}
         <nav className="sw-nav" aria-label="Sections">
           {NAV_MAIN.map((it) => <NavItem key={it.id} it={it} route={route} onGo={go} />)}
           <div className="sw-nav-sec">Tools</div>
           {NAV_TOOLS.map((it) => <NavItem key={it.id} it={it} route={route} onGo={go} />)}
         </nav>
         <div className="sw-rail-foot">
-          <QuickInfo text={SCREEN_INFO[route] || ""} open={quickOpen} onToggle={toggleQuick} />
           <button className="sw-navitem" onClick={() => setSettingsOpen(true)}><Settings2 /> <span className="sw-navlabel">Settings</span></button>
         </div>
       </aside>
 
       <main className="sw-main">
+        <div className="sw-topbell">
+          <NotifBell count={unread} open={notifOpen} onClick={() => setNotifOpen((v) => !v)} />
+          {notifOpen && <NotifPopover items={notifs} onOpen={openNotif} onClear={markAllRead} />}
+        </div>
+
+        {route === "clusters" && (
+          openCluster
+            ? <ClusterDetail cl={openCluster} loops={loops} vault={vault} meetings={meetings}
+                onBack={() => setOpenClusterId(null)} onOpenLoop={openLoopFromCluster} />
+            : <Clusters clusters={SEED_CLUSTERS} loops={loops} vault={vault} onOpen={(id) => setOpenClusterId(id)} />
+        )}
+
         {route === "desk" && (
           openMove
             ? <MoveInspector loop={openLoop} m={openMove} backLabel="Desk" onBack={backFromMove} onStudio={toStudio} actions={boundActions} />
@@ -451,6 +511,10 @@ export default function Steward() {
             <span>{toast.msg}</span>
             {toast.action && <button onClick={() => { toast.action.fn(); setToast(null); }}>{toast.action.label}</button>}
           </div>
+        )}
+
+        {route !== "studio" && route !== "settings" && (
+          <AskBar placeholder={askCtx.placeholder} label={askCtx.label} onAsk={askFromScreen} />
         )}
       </main>
 

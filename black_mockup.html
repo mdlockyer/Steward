@@ -1,0 +1,296 @@
+import React, { useState } from 'react';
+import { 
+  AlertTriangle, 
+  ArrowRight, 
+  MessageSquare, 
+  Video, 
+  FileText, 
+  CornerDownRight,
+  GripVertical,
+  Activity,
+  Calendar,
+  ChevronRight,
+  Plus,
+  Command,
+  Zap
+} from 'lucide-react';
+
+// --- SEMANTIC UI COLOR SYSTEM ---
+// Truth/Provenance: text-neutral-500 (Recedes, always traceable)
+// Attention/Salience: text-white / text-amber-500 (Sharp, demands focus)
+// Action/Levers: text-cyan-400 (The interactive graph mutations)
+
+const App = () => {
+  const [currentJob, setCurrentJob] = useState('reconcile'); // 'triage', 'reconcile', 'prepare'
+
+  // --- SUB-COMPONENTS (The Deterministic Compiler Output) ---
+
+  const OmniBar = () => (
+    <div className="fixed bottom-0 left-0 right-0 p-6 flex flex-col items-center justify-center bg-gradient-to-t from-black via-black/90 to-transparent z-50">
+      <div className="w-full max-w-2xl flex gap-3 mb-4 justify-center">
+        <button onClick={() => setCurrentJob('triage')} className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full transition-colors ${currentJob === 'triage' ? 'bg-neutral-800 text-white' : 'text-neutral-500 hover:text-white'}`}>Posture: Start Day</button>
+        <button onClick={() => setCurrentJob('reconcile')} className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full transition-colors ${currentJob === 'reconcile' ? 'bg-neutral-800 text-white' : 'text-neutral-500 hover:text-white'}`}>Posture: Review Risk</button>
+        <button onClick={() => setCurrentJob('prepare')} className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full transition-colors ${currentJob === 'prepare' ? 'bg-neutral-800 text-white' : 'text-neutral-500 hover:text-white'}`}>Posture: Mtg Prep</button>
+      </div>
+      <div className="w-full max-w-3xl bg-neutral-900/60 border border-neutral-800 rounded-3xl p-4 flex items-center gap-3 backdrop-blur-md transition-all hover:border-neutral-700 group">
+        <Plus className="text-neutral-500 group-hover:text-white transition-colors" size={20} />
+        <input 
+          type="text" 
+          placeholder="Command the work graph... (e.g., 'Delegate the codec decision to Marcus')" 
+          className="bg-transparent border-none outline-none text-white w-full font-light placeholder:text-neutral-600"
+          readOnly
+        />
+        <Command className="text-neutral-600" size={18} />
+      </div>
+    </div>
+  );
+
+  const PredicateBadge = ({ verb, color = "text-neutral-400 border-neutral-800" }) => (
+    <button className={`text-[10px] uppercase tracking-widest px-2 py-0.5 border rounded-full hover:bg-neutral-900 transition-colors ${color} flex items-center gap-1`}>
+      {verb} <ChevronRight size={10} />
+    </button>
+  );
+
+  const ActionLever = ({ label }) => (
+    <button className="group flex items-center gap-2 mt-3 text-cyan-400 hover:text-cyan-300 transition-colors">
+      <CornerDownRight size={16} className="opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+      <span className="text-xs uppercase tracking-widest font-semibold">{label}</span>
+    </button>
+  );
+
+  // --- VIEW FRAMES ---
+
+  const VarianceBoard = () => (
+    <div className="w-full max-w-6xl mx-auto pt-24 pb-48 px-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <header className="mb-16 text-center">
+        <p className="text-neutral-500 text-xs uppercase tracking-widest mb-2 font-semibold">Frame: Variance Board</p>
+        <h1 className="text-3xl font-light text-white tracking-tight">Plan drift requiring reconciliation</h1>
+        <p className="text-amber-500/80 mt-3 text-sm flex items-center justify-center gap-2">
+          <AlertTriangle size={16} /> Contradiction detected in Q3 Capture GA timeline.
+        </p>
+      </header>
+
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-12 items-start relative">
+        
+        {/* Left: Expected Plan */}
+        <div className="space-y-12 text-right">
+          <h2 className="text-neutral-600 text-xs uppercase tracking-widest border-b border-neutral-900 pb-2 mb-8">Declared Plan</h2>
+          
+          <div className="group relative">
+            <p className="text-neutral-500 text-sm mb-1">Milestone: June 16</p>
+            <h3 className="text-xl text-neutral-300 font-light group-hover:text-white transition-colors cursor-pointer flex items-center justify-end gap-3">
+              Rig firmware bump <GripVertical size={14} className="text-neutral-800 group-hover:text-neutral-500 opacity-0 group-hover:opacity-100" />
+            </h3>
+            <p className="text-neutral-600 text-xs mt-2">Owner: Dmitri Volkov</p>
+          </div>
+
+          <div className="group relative opacity-50">
+            <p className="text-neutral-500 text-sm mb-1">Milestone: June 24</p>
+            <h3 className="text-xl text-neutral-300 font-light flex items-center justify-end gap-3">
+              Codec licensing cleared
+            </h3>
+          </div>
+
+          <div className="group relative border-r-2 border-amber-500/30 pr-4 -mr-[18px]">
+            <p className="text-amber-500/50 text-sm mb-1">Target: June 30</p>
+            <h3 className="text-2xl text-white font-medium flex items-center justify-end gap-3">
+              Capture Pipeline GA
+            </h3>
+            <div className="flex justify-end mt-3">
+              <PredicateBadge verb="at_risk" color="text-amber-500 border-amber-900 bg-amber-950/20" />
+            </div>
+          </div>
+        </div>
+
+        {/* Center: The Semantic Tension */}
+        <div className="flex flex-col items-center justify-center pt-24 space-y-32">
+          <div className="w-px h-16 bg-neutral-800"></div>
+          <PredicateBadge verb="contradicts" color="text-amber-500 border-amber-500/30 bg-amber-500/10" />
+          <div className="w-px h-32 bg-gradient-to-b from-amber-500/20 to-transparent"></div>
+        </div>
+
+        {/* Right: Observed Reality */}
+        <div className="space-y-12">
+          <h2 className="text-neutral-600 text-xs uppercase tracking-widest border-b border-neutral-900 pb-2 mb-8">Observed Reality</h2>
+
+          <div className="group relative">
+            <p className="text-neutral-500 text-sm flex items-center gap-2 mb-1">
+              <MessageSquare size={12} /> Slack • 2 hours ago
+            </p>
+            <h3 className="text-xl text-white font-light group-hover:text-neutral-300 transition-colors cursor-pointer flex items-center gap-3">
+              <GripVertical size={14} className="text-neutral-800 group-hover:text-neutral-500 opacity-0 group-hover:opacity-100 -ml-5 absolute left-0" />
+              "Thermal pads need firmware bump first, waiting on both."
+            </h3>
+            <p className="text-neutral-500 text-xs mt-2">Source: Priya Menon</p>
+            <ActionLever label="Ping Priya for status" />
+          </div>
+
+          <div className="group relative border-l-2 border-amber-500 pl-4 -ml-[18px]">
+            <p className="text-amber-500/80 text-sm flex items-center gap-2 mb-1">
+              <AlertTriangle size={12} /> Detected Drift
+            </p>
+            <h3 className="text-2xl text-white font-medium flex items-center gap-3">
+              Codec decision is slipping
+            </h3>
+            <p className="text-neutral-400 text-sm mt-2 leading-relaxed">
+              Marcus signaled early July for the license. This pushes the GA risk above threshold.
+            </p>
+            <div className="mt-4 flex gap-2 items-center">
+               <PredicateBadge verb="blocks_plan" />
+               <ActionLever label="Draft Escalation to Legal" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const TriageQueue = () => (
+    <div className="w-full max-w-3xl mx-auto pt-24 pb-48 px-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <header className="mb-12 border-b border-neutral-900 pb-8">
+        <p className="text-neutral-500 text-xs uppercase tracking-widest mb-2 font-semibold flex items-center gap-2">
+          <Activity size={14} /> Frame: Ranked Action Queue
+        </p>
+        <h1 className="text-3xl font-light text-white tracking-tight">Attention required</h1>
+        <p className="text-neutral-400 mt-2 text-sm">Ranked by blast radius and urgency.</p>
+      </header>
+
+      <div className="space-y-8">
+        {/* Item 1 */}
+        <div className="group relative pl-6">
+          <GripVertical size={16} className="absolute left-0 top-1 text-neutral-800 group-hover:text-neutral-500 transition-colors cursor-grab" />
+          <div className="flex items-center gap-3 mb-2">
+            <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
+            <p className="text-amber-500 text-xs uppercase tracking-widest font-semibold">Priority 87 • Incident</p>
+            <PredicateBadge verb="blocks_production" />
+          </div>
+          <h3 className="text-2xl text-white font-medium mb-2">Capture pipeline is corrupting frames in production</h3>
+          <p className="text-neutral-500 text-sm mb-4">Owner: Dmitri Volkov • Source: Datadog / PagerDuty</p>
+          <ActionLever label="Join Incident Bridge" />
+        </div>
+
+        <div className="w-full h-px bg-neutral-900 my-8"></div>
+
+        {/* Item 2 */}
+        <div className="group relative pl-6">
+          <GripVertical size={16} className="absolute left-0 top-1 text-neutral-800 group-hover:text-neutral-500 transition-colors cursor-grab" />
+          <div className="flex items-center gap-3 mb-2">
+            <p className="text-neutral-400 text-xs uppercase tracking-widest font-semibold">Priority 66 • Plan Risk</p>
+            <PredicateBadge verb="affects_q3" />
+          </div>
+          <h3 className="text-2xl text-neutral-200 font-light mb-2 hover:text-white transition-colors cursor-pointer">Codec decision is slipping — Q3 Capture GA now at risk</h3>
+          <p className="text-neutral-500 text-sm mb-4">Owner: Marcus Chen • Source: Slack / Roadmap</p>
+          <div className="flex items-center gap-4">
+             <ActionLever label="Initiate Reconciliation" />
+             <button className="text-neutral-500 hover:text-neutral-300 text-xs uppercase tracking-widest font-semibold transition-colors mt-3 flex items-center gap-1">Dismiss <CornerDownRight size={14}/></button>
+          </div>
+        </div>
+
+        <div className="w-full h-px bg-neutral-900 my-8"></div>
+
+        {/* Item 3 */}
+        <div className="group relative pl-6 opacity-70 hover:opacity-100 transition-opacity">
+          <GripVertical size={16} className="absolute left-0 top-1 text-neutral-800 group-hover:text-neutral-500 transition-colors cursor-grab" />
+          <div className="flex items-center gap-3 mb-2">
+            <p className="text-neutral-500 text-xs uppercase tracking-widest font-semibold">Priority 56 • Blocked</p>
+            <PredicateBadge verb="waiting_on_finance" />
+          </div>
+          <h3 className="text-xl text-neutral-300 font-light mb-2">Budget ask for 2 more test rigs stalled</h3>
+          <p className="text-neutral-500 text-sm mb-4">Owner: Dana Whitfield • Source: Email</p>
+          <ActionLever label="Nudge Finance VP" />
+        </div>
+      </div>
+    </div>
+  );
+
+  const DossierBrief = () => (
+    <div className="w-full max-w-6xl mx-auto pt-24 pb-48 px-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <header className="mb-16">
+        <p className="text-neutral-500 text-xs uppercase tracking-widest mb-2 font-semibold flex items-center gap-2">
+          <Calendar size={14} /> Frame: Dossier / Meeting Brief
+        </p>
+        <h1 className="text-3xl font-light text-white tracking-tight">1:1 with Priya Menon</h1>
+        <p className="text-neutral-400 mt-2 text-sm">Today @ 2:00 PM • Synthesized from 4 open loops.</p>
+      </header>
+
+      <div className="grid grid-cols-2 gap-16">
+        {/* Left: Compressed Narrative */}
+        <div>
+          <h2 className="text-cyan-400 text-xs uppercase tracking-widest border-b border-neutral-900 pb-2 mb-6 font-semibold">Executive Summary</h2>
+          <div className="space-y-6 text-neutral-300 font-light leading-relaxed text-lg">
+            <p>
+              Priya is currently blocked on the <span className="text-white font-medium border-b border-dashed border-neutral-600">M-series test rigs</span>. She cannot proceed with the thermal mitigation until the firmare bump is complete, which Dmitri committed to "this week" but hasn't delivered.
+            </p>
+            <p>
+              Additionally, she is flagged as the owner for the <span className="text-white font-medium border-b border-dashed border-neutral-600">Audio-dropout repro</span>, but the AI predicts this is a misallocation of her time given the Q3 GA pressure.
+            </p>
+            
+            <div className="bg-neutral-900/40 border border-neutral-800 p-6 rounded-2xl mt-8">
+              <h4 className="text-xs uppercase text-neutral-500 tracking-widest mb-4">Suggested Interventions</h4>
+              <ActionLever label="Transfer Audio-dropout to Lena" />
+              <ActionLever label="Commit to unblocking firmware by EOD" />
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Evidence Ledger */}
+        <div>
+          <h2 className="text-neutral-600 text-xs uppercase tracking-widest border-b border-neutral-900 pb-2 mb-6 font-semibold">Evidence Ledger (Provenance)</h2>
+          
+          <div className="space-y-6">
+            <div className="flex gap-4 items-start group">
+              <div className="text-neutral-600 mt-1"><MessageSquare size={16} /></div>
+              <div>
+                <p className="text-neutral-400 text-sm leading-relaxed">"Still waiting on Dmitri for the firmware bump. Pad order is in, but I'm dead in the water until both land."</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-neutral-600 text-xs">Priya Menon • #hardware-track</span>
+                  <PredicateBadge verb="blocks_thermal" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start group">
+              <div className="text-neutral-600 mt-1"><Video size={16} /></div>
+              <div>
+                <p className="text-neutral-400 text-sm leading-relaxed">Platform Sync Transcript: "Audio is dropping frames again. Priya, can you look at the repro?"</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-neutral-600 text-xs">Platform Sync • Yesterday</span>
+                  <PredicateBadge verb="created_obligation" />
+                </div>
+              </div>
+            </div>
+
+             <div className="flex gap-4 items-start group opacity-60">
+              <div className="text-neutral-600 mt-1"><FileText size={16} /></div>
+              <div>
+                <p className="text-neutral-400 text-sm leading-relaxed">Q3 Milestone Definition: "Thermal mitigation is a hard requirement for GA."</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-neutral-600 text-xs">Capture_GA_plan.md</span>
+                  <PredicateBadge verb="sets_constraint" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-cyan-900 selection:text-cyan-50">
+      
+      {/* Dynamic Viewport */}
+      <main className="w-full">
+        {currentJob === 'triage' && <TriageQueue />}
+        {currentJob === 'reconcile' && <VarianceBoard />}
+        {currentJob === 'prepare' && <DossierBrief />}
+      </main>
+
+      {/* Persistent Omni-Bar */}
+      <OmniBar />
+      
+    </div>
+  );
+};
+
+export default App;

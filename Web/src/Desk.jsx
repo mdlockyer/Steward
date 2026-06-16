@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { ChevronRight, X, Sparkles, Inbox } from "lucide-react";
 import { person, priorityOf, MOVE_TYPE } from "./data.js";
-import { Avatar, SevDot, AgeBadge, TypeChip, EmptyState } from "./components.jsx";
+import { Avatar, SevDot, AgeBadge, TypeChip, EmptyState, PageHead } from "./components.jsx";
 
 /* ============================================================================
    DESK — the present-tense attention surface: what needs you right now.
@@ -29,29 +29,29 @@ export default function Desk({ loops, seg, setSeg, onOpen, onDismiss }) {
   const shown = deskLoops.filter((l) => LANES[seg](l.move, l));
 
   return (
-    <>
-      <div className="sw-seg" role="group" aria-label="Filter the Desk">
-        {segs.map(([k, l]) => (
-          <button key={k} aria-pressed={seg === k} onClick={() => setSeg(k)}>
-            {l}<span className="sw-seg-n">{count(k)}</span>
-          </button>
-        ))}
-      </div>
-      <div className="sw-scroll">
-        {shown.length === 0 ? (
-          <EmptyState icon={seg === "fire" ? Inbox : Sparkles}
-            title={seg === "all" ? "Desk clear" : "Nothing in this lane"}>
-            {seg === "all"
-              ? "Steward is listening. New Moves surface here as activity comes in."
-              : "Steward routes Moves into this lane as they qualify."}
-          </EmptyState>
-        ) : (
-          <ul className="sw-group" style={{ listStyle: "none", margin: "14px 0 0", padding: 0 }}>
-            {shown.map((l) => <DeskRow key={l.id} l={l} onOpen={onOpen} onDismiss={onDismiss} />)}
-          </ul>
-        )}
-      </div>
-    </>
+    <div className="sw-scroll">
+      <PageHead title="Desk" sub="What needs you now — ranked by severity × needle-impact, not confidence.">
+        <div className="sw-seg" role="group" aria-label="Filter the Desk">
+          {segs.map(([k, l]) => (
+            <button key={k} aria-pressed={seg === k} onClick={() => setSeg(k)}>
+              {l}<span className="sw-seg-n">{count(k)}</span>
+            </button>
+          ))}
+        </div>
+      </PageHead>
+      {shown.length === 0 ? (
+        <EmptyState icon={seg === "fire" ? Inbox : Sparkles}
+          title={seg === "all" ? "Desk clear" : "Nothing in this lane"}>
+          {seg === "all"
+            ? "Steward is listening. New Moves surface here as activity comes in."
+            : "Steward routes Moves into this lane as they qualify."}
+        </EmptyState>
+      ) : (
+        <ul className="sw-group" style={{ listStyle: "none", margin: "6px 0 0", padding: 0 }}>
+          {shown.map((l) => <DeskRow key={l.id} l={l} onOpen={onOpen} onDismiss={onDismiss} />)}
+        </ul>
+      )}
+    </div>
   );
 }
 

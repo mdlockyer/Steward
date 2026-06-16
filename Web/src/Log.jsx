@@ -1,7 +1,7 @@
 import React from "react";
 import { Check, Archive } from "lucide-react";
 import { person, MOVE_TYPE } from "./data.js";
-import { Avatar, TypeChip, EmptyState } from "./components.jsx";
+import { Avatar, TypeChip, EmptyState, PageHead } from "./components.jsx";
 
 /* ============================================================================
    LOG — narrows to closed loops: the archive that Carrying graduates into, with
@@ -13,6 +13,7 @@ export default function Log({ log }) {
   return (
     <>
       <div className="sw-scroll">
+        <PageHead title="Log" sub="Closed loops — the part of what you were carrying that has resolved." />
         {log.length === 0 ? (
           <EmptyState icon={Archive} title="Nothing closed yet">
             Close a loop in Carrying, or execute a Move on the Desk, and it lands here.

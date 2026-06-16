@@ -1,0 +1,17 @@
+id: as_capture
+type: ai.session
+title: "Capture Pipeline chat"
+provenance:
+  source: user
+createdAt: "2026-06-13T17:05:00Z"
+updatedAt: "2026-06-13T17:05:00Z"
+body:
+  model: "claude"
+  scope:
+    clusterId: cl_capture
+    boostInScope: 2.5
+    allowGlobal: true
+    hardScope: false
+  pinned: [nt_codec]
+  messages:
+    - { role: user, content: "I need the codec status and the rig fix for the board deck Monday." }

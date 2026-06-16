@@ -1,7 +1,7 @@
 import React from "react";
 import { GitBranch, AlertTriangle, Circle, Layers } from "lucide-react";
 import { person, ROADMAP_STATUS } from "./data.js";
-import { Avatar } from "./components.jsx";
+import { Avatar, PageHead } from "./components.jsx";
 
 /* ============================================================================
    ROADMAP — treated as a living document, so its value is reconciliation rather
@@ -18,6 +18,7 @@ export default function Roadmap({ roadmap, onOpenLoop }) {
   return (
     <>
       <div className="sw-scroll">
+        <PageHead title="Roadmap" sub="Where reality and the plan disagree — slips and broken dependencies, surfaced as loops." />
         {(slipping > 0 || atRisk > 0) && (
           <div className="sw-fire" style={{ margin: "14px 0 0", borderColor: "rgba(176,106,0,.4)", background: "linear-gradient(180deg,rgba(255,159,10,.08),rgba(255,159,10,.02))" }}>
             <div className="sw-fire-top">

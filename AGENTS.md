@@ -20,19 +20,11 @@ glass toolbar, and appearance picker are real; the page content is web.
 
 ### Native ↔ web bridge
 
-`Sources/Web/WebContentView.swift` wraps `WKWebView` and is the detail content —
-the sidebar **never swaps it**. Selecting a sidebar item pushes a `navigate` event
-into the page; React changes screen internally. The contract:
-
-- **Swift → JS** (`window.__native`, defined by `WebBridge.bootstrapScript`):
-  `navigate(id)`, `setTheme("light"|"dark")`, `setInsets(top, bottom)`.
-- **JS → Swift**: `postMessage({ type: "ready" })` after React mounts; Swift then
-  flushes state.
-- **Screen ids are `Screen` rawValues** (`loremIpsum`, `dolorSit`) — matched in
-  `Web/src/App.tsx`. A test guards this contract.
-
-`AppSchemeHandler` serves the bundled app over `app://local/` in RELEASE; DEBUG
-loads the Vite dev server.
+> Superseded — the original native-sidebar bridge description was archived to
+> `.archive/AGENTS.native-bridge-section.stale.md` (it described a native sidebar
+> pushing routes, `loremIpsum`/`dolorSit` ids, and a TypeScript `Web/src/App.tsx`,
+> all removed in the hollow-shell redesign). See `CLAUDE.md` → "Native ↔ web bridge"
+> for the current contract.
 
 ## Build, Test, and Development Commands
 
@@ -64,3 +56,5 @@ Swift Testing (`@Suite`/`@Test`) in `Tests/SwiftUITemplateTests/`, with
 Commit subjects are short, sentence-case, imperative or descriptive ("Lock base
 features") — no conventional-commit prefixes. No PR template. Commit `project.yml`,
 never the generated `.xcodeproj` or built `Resources/web`.
+
+## Imported Claude Cowork project instructions

@@ -43,6 +43,21 @@ export function EmptyState({ icon: Icon = Sparkles, title, children }) {
   );
 }
 
+/* One header for every list screen: the screen's name, a one-line statement of
+   what it's for, and an optional slot for controls (tabs / search) on the right.
+   Detail views keep their own back-button headers. */
+export function PageHead({ title, sub, children }) {
+  return (
+    <div className="sw-phead">
+      <div className="sw-phead-main">
+        <h1 className="sw-phead-t">{title}</h1>
+        {sub && <p className="sw-phead-s">{sub}</p>}
+      </div>
+      {children && <div className="sw-phead-right">{children}</div>}
+    </div>
+  );
+}
+
 /* ------------------------------ spine plumbing --------------------------- */
 const NODE_ICON = {
   observe: Radio, connect: Link2, retrieve: Search, send: MessageSquare,

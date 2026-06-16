@@ -4,7 +4,7 @@ import {
   CornerDownRight, CheckCircle2,
 } from "lucide-react";
 import { person } from "./data.js";
-import { Avatar, AvatarStack, EmptyState } from "./components.jsx";
+import { Avatar, AvatarStack, EmptyState, PageHead } from "./components.jsx";
 
 /* ============================================================================
    MEETINGS — a first-class object, not a transcript fed in after the fact.
@@ -19,7 +19,8 @@ export default function Meetings({ meetings, onOpen }) {
   return (
     <>
       <div className="sw-scroll">
-        <div className="sw-group-h">Upcoming <span className="sw-gh-n">{upcoming.length}</span></div>
+        <PageHead title="Meetings" sub="Prep before, capture during — commitments fan out into Carrying after." />
+        <div className="sw-group-h" style={{ marginTop: 6 }}>Upcoming <span className="sw-gh-n">{upcoming.length}</span></div>
         <div className="sw-group">
           {upcoming.map((m) => <MeetingRow key={m.id} m={m} onOpen={onOpen} />)}
         </div>

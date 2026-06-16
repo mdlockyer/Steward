@@ -1,0 +1,19 @@
+id: sl_priya
+type: slack.message
+title: "Priya re: thermal throttling on the M-series rigs"
+provenance:
+  source: slack
+  uri: "slack://channel/C09HW/p1781300000"
+  author: "Priya Menon"
+  ingestedAt: "2026-06-13T16:20:00Z"
+  external: false
+createdAt: "2026-06-13T16:20:00Z"
+updatedAt: "2026-06-13T16:20:00Z"
+body:
+  author: "Priya Menon"
+  channel: "#hw-platform"
+  workspace: "studio"
+  text: "The M-series rigs are thermal-throttling on long capture runs, it's skewing our perf numbers."
+  ts: "2026-06-13T16:20:00Z"
+  permalink: "https://studio.slack.com/archives/C09HW/p1781300000"
+  reactions: ["eyes"]

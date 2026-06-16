@@ -4,62 +4,45 @@
 
 "Done" is not the current prototype with more screens bolted on. It is a different center of gravity.
 
-The prototype closes errands: see a signal, reason a chain, send something, file an artifact, archive it. A Technical Director's week is not errands. It is open loops that persist across days. Commitments made in a meeting and then half-forgotten. A fire whose severity changes by the hour. A roadmap date that quietly drifts under you. A budget ask sitting with Finance for a week. The done state is the version of Steward built around those loops, with the errand-closing mechanic from the prototype as one Move type inside it, not the whole product.
+The prototype closes errands: see a signal, reason a chain, send something, file an artifact, archive it. A Technical Director's week is not errands. It is open loops that persist across days — a commitment half-forgotten after a meeting, a fire whose severity changes by the hour, a roadmap date drifting under you, a budget ask sitting with Finance for a week. The done state is built around those loops, with the errand-closing mechanic from the prototype as one Move type inside it, not the whole product.
 
-This document describes that target. It does not describe how to get there. Two of its load-bearing pillars (turning raw signal into proposed work, and modeling who owns what) are research-hard rather than merely engineering-hard, and I have flagged those where they appear.
+This document describes that target, not how to get there. Two of its load-bearing pillars — turning raw signal into proposed work, and modeling who owns what — are research-hard rather than merely engineering-hard, and are flagged where they appear.
 
-## The core model: loops and Moves
+## The core model: Objects and Clusters
 
-Everything Steward tracks is an open loop. A loop has an owner, a counterparty or audience, a state, and an age. "Waiting on Priya for the pad spec" is a loop. "Q3 capture milestone depends on the codec decision" is a loop. "Two test rigs, budget ask sitting with Finance since Tuesday" is a loop. A loop closes when the thing it waits on resolves.
+The platform is two primitives. **Everything is one Object** — a Move, an Obsidian note, a Slack message, a person, a loop, an alert, a search result — differing only in type, lineage, and body. One acceptance rule governs them all: a thing can never *be* a Move, but a Move can *contain* it. **Clusters** group Objects and are the home. Auto-clustering, per-cluster Moves, artifacts, and scoped chat are all just operations on these two things.
 
-A Move is still the unit of action: a linear spine of reasoned nodes with approval gates, and the correct-and-recompute interaction is intact. What changes is what a Move does to loops. A Move can open a loop (send the ask), advance one (nudge, escalate, gather the missing input), or close one (file the ticket, publish the decision). The spine, the per-node confidence, the gated outbound and write steps, and recompute-from-a-node all carry over without change. Those primitives were right. They were pointed at too small a target.
+Loops and Moves live inside that model. A **loop** is an open Object with an owner, a counterparty, a state, and an age ("waiting on Priya for the pad spec"). A **Move** is the unit of action: a linear spine of reasoned nodes with approval gates, and the correct-and-recompute interaction intact. A Move opens a loop, advances one, or closes one. The prototype's Log was a graveyard of finished things; here the spine that matters is **what you are carrying**, and the Log is only the part of it that has closed.
 
-The reframe in one line: the prototype's Log was a graveyard of finished things. In the done state, the spine that matters is **what you are carrying**, and the Log is only the part of it that has closed.
+## The home: the Cluster board
 
-## Surfaces
+The board is a glanceable grid of Cluster cards — hand-assembled, or model-generated during regular structuring passes. An auto-cluster carries a confidence and must be gated and correctable, because a wrong cluster mis-scopes the model, which is worse than no cluster. Drilling in reveals the Cluster's info, its search, and its member Objects, with an artifacts toggle for what the Cluster has produced.
 
-**Desk** is the present-tense attention surface: what needs you right now. The prototype ranked by confidence alone, which cannot tell a fire from a retro summary. Done-state Desk ranks by **severity × needle-impact**, with confidence demoted to a quality signal on the proposal rather than its priority. Fires do not wait politely at the bottom of a list; they surface to the top and, past a severity threshold, interrupt (see Reactive mode).
+One search component spans the board and every Cluster: a discrete bar → a focused "ask anything" typeahead → a floating chat. The user's search box and the model's retrieval tool hit the **same** hybrid index, so they never drift. Scope is one knob — weight in-cluster results up, optionally see outside, or lock in — not two systems.
 
-**Carrying** is the new substrate and the largest addition. It is every open loop in one place: commitments you made, things you are waiting on, asks in flight, fire status, roadmap risks. Each loop shows its age and its next nudge. This is the surface that matches how the role is actually experienced, and meetings, fires, roadmaps, and budget are mostly views onto it rather than separate features.
+## Surfaces become lenses
 
-**Meetings** is a first-class object, not just a transcript fed in after the fact. Before: a prep brief (what this is about, what you owe these people, what is open with them, what decisions are pending). During: capture. After: commitments fan out of the transcript into Carrying as tracked loops, and decisions land in a decision log.
+Desk, Carrying, Meetings, Roadmap, Vault, Sources, and Log do not disappear; they become lenses over Objects that work globally or scope to a Cluster.
 
-**Roadmap** is treated as a living document, so its value is reconciliation rather than creation. Steward watches the signals that contradict the plan ("X just said they will miss the date that Y depends on") and surfaces slips and broken dependencies as loops, with a Move to adjust the plan or send the status that the slip now requires.
+- **Desk** ranks present-tense attention by **severity × needle-impact**, with confidence demoted to a quality signal. Fires surface to the top and, past a threshold, interrupt (Reactive mode: urgency, escalation, change-since-last-look, notifications that reach you outside the app).
+- **Carrying** is every open loop in one place — commitments, waits, asks in flight, fire status, roadmap risk — each with its age and next nudge.
+- **Meetings** is a first-class object: a prep brief before, capture during, and commitments that fan out of the transcript into Carrying after, with decisions logged.
+- **Roadmap** is reconciliation, not creation: Steward notices when reality and the plan disagree and surfaces slips and broken dependencies as loops.
+- **Vault** is the Obsidian-backed note store — canonical markdown on disk, the Object is metadata pointing at it. **Sources** keeps the MCP mesh and swappable engine, and adds the people/org model and financial data.
+- **Log** is the closed slice of Carrying, with each Move's full trace preserved.
 
-**Sources** keeps its job (the MCP mesh and the swappable reasoning engine) and gains two new inputs: the people and org model, and financial data. Reads stay relatively permissive; every write surface stays gated.
+Move types generalize the spine into a small set, all keeping the gate and recompute: errand, delegate/route, escalate (fire), prep (read-only, no send gate), reconcile (roadmap slip), and pitch (budget and exec artifacts — numbers and a deck, not a Jira ticket). High-stakes recipients raise the bar on the gate rather than passing through a flat one. Corrections stick across Moves: tell Steward "we standardize on Arctic" once and it persists.
 
-**Log** narrows to closed loops: the archive that Carrying graduates into, with the full trace of each Move preserved (sources, steps, and any corrections you made).
+## The engine underneath
 
-## How the four realities are served
-
-**Meetings.** Prep brief before, commitment fan-out after. The single biggest time sink becomes the thing Steward both feeds on and feeds back into, instead of a one-way ingest.
-
-**Roadmaps.** Drift detection and dependency reconciliation, surfaced as loops. Steward does not own the roadmap; it owns noticing when reality and the roadmap disagree.
-
-**Fires.** A severity dimension separate from confidence, an escalation path, change detection ("worse than an hour ago"), and an interrupt model so a fire comes to find you. A fire Move's job is usually to assemble the right people and draft the stakeholder status update, not to file a ticket.
-
-**Budget.** Two competences the prototype lacks entirely. Numbers (a budget ask needs cost reasoning, not prose) and exec-facing artifacts (a pitch is a deck and a justification narrative, not a Jira ticket). A budget loop tracks the ask from draft through the approval chain and nudges at each stall.
-
-## Capabilities rolled in
-
-**Delegation and a people/org model.** A director accomplishes through their team; they route more than they execute. Every Move can delegate or reassign, and Steward knows enough about who owns what to route correctly and to pick the right escalation target. In the prototype, Steward "found a thread with Dmitri" but had no idea what Dmitri owns. Here it does. (This model is one of the hard pillars: it is only as good as the org data it can see, and stale ownership data produces confidently wrong routing.)
-
-**Reactive mode.** The prototype assumes a deliberative posture: you have time to read a spine and adjust a node. Fires need the opposite. Reactive mode adds urgency, escalation, change-since-last-look, and notifications that reach you outside the app.
-
-**Audience-aware stakes.** A budget message to your VP is not a peer Slack ping. High-stakes recipients raise the bar on the approval gate (more confirmation, a preview of exactly what goes out, sometimes a second look) rather than passing through the same flat gate as a low-stakes one.
-
-**Cross-Move memory.** Corrections stick. When you tell Steward "we standardize on Arctic," it does not relearn that on the next Move. Standards, decisions, and preferences persist and feed future reasoning. This is also what makes delegation and reconciliation improve over time instead of resetting.
-
-**Move types.** The spine generalizes into a small set, all of which keep the gate and recompute mechanics: errand (the original), delegate/route, escalate (fire), prep (a read-only meeting brief, no external write, so no send gate), reconcile (roadmap slip), and pitch (budget and other exec artifacts).
+One local-first index is the engine: every source (vault, files, MCP, web) embeds into a single hybrid space (vector + keyword/BM25), and that one retrieval path serves both the search box and the model. The split that organizes storage is origin, not searchability: **authored/vault-native Objects are files on disk (the source of truth); ingested/ephemeral Objects live in the index** with a YAML projection on demand. Editing a note writes its markdown and re-derives the metadata — never a YAML rewrite of its content.
 
 ## What carries over unchanged
 
-The interaction model is the part of the prototype that was already right, and the done state does not touch it. The linear spine with gates, the correct-and-recompute loop (verify down to the live edge, adjust a node, watch everything downstream re-derive while verified steps hold), tiered autonomy (read and reason freely, gate every outbound and every write), the MCP-mostly source strategy, the provider-agnostic reasoning engine, and the integrity stance (confidence labeled as Steward's estimate, never as measured truth) all survive intact.
+The interaction model was already right. The linear spine with gates, the correct-and-recompute loop (verify to the live edge, adjust a node, watch downstream re-derive while verified steps hold), tiered autonomy (read and reason freely, gate every outbound and every write), the MCP-mostly source strategy, the provider-agnostic engine, and the integrity stance (confidence is Steward's estimate, never measured truth) all survive intact.
 
-## What is hard, and what "done" deliberately excludes
+## What is hard, and what "done" excludes
 
-Two things are genuinely hard, not just unbuilt. **Candidate generation** (turning raw signal across all sources into proposed Moves worth your attention) is the central unsolved problem; the prototype fakes it completely, and the quality of everything downstream depends on it. The **people/org model** is the second; it is the difference between useful delegation and confident misrouting, and it degrades silently when the underlying data goes stale.
+Two things are genuinely hard. **Candidate generation** — turning raw signal into proposed Moves worth your attention — is the central unsolved problem; the proposed cold-start is an overnight job that back-traces each real outcome (a filed ticket, a sent message) into a `move.trace` you can inspect and correct, so generation imitates your patterns instead of guessing. The **people/org model** is the second: the difference between useful delegation and confident misrouting, and it degrades silently as ownership data goes stale.
 
-Done state deliberately excludes a few things to stay honest about its job. Steward does not act unsupervised on anything outbound or destructive; the gate is the product, not a speed bump to remove later. It does not replace the roadmap tool, the issue tracker, or the deck tool; it reasons across them and writes into them. It is a single-operator tool first; multi-user, shared loops, and team-wide rollout are a later layer, not part of this target.
-
-One caveat on scope. This is written to the Technical-Director-at-a-large-studio archetype we discussed, not from inside knowledge of any specific org's tooling or process. Treat the role-shaped parts as a strong hypothesis to test against a real week, not as settled requirements.
+Done state excludes, on purpose: nothing unsupervised on anything outbound or destructive (the gate is the product, not a speed bump to remove); it does not replace the roadmap tool, issue tracker, or deck tool — it reasons across them and writes into them; and it is single-operator first, with multi-user a later layer. This is written to the Technical-Director archetype we discussed — treat the role-shaped parts as a strong hypothesis to test against a real week, not settled requirements.

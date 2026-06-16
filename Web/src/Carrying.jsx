@@ -5,7 +5,7 @@ import {
 import {
   person, priorityOf, LOOP_TYPE, STATE_META, MOVE_TYPE,
 } from "./data.js";
-import { Avatar, SevDot, AgeBadge, TypeChip, EmptyState } from "./components.jsx";
+import { Avatar, SevDot, AgeBadge, TypeChip, EmptyState, PageHead } from "./components.jsx";
 
 /* ============================================================================
    CARRYING — the new substrate and the largest addition. Every open loop in one
@@ -31,26 +31,26 @@ export default function Carrying({ loops, seg, setSeg, onOpen }) {
   const shown = ranked.filter(LANES[seg]);
 
   return (
-    <>
-      <div className="sw-seg" role="group" aria-label="Filter loops">
-        {segs.map(([k, l]) => (
-          <button key={k} aria-pressed={seg === k} onClick={() => setSeg(k)}>
-            {l}<span className="sw-seg-n">{count(k)}</span>
-          </button>
-        ))}
-      </div>
-      <div className="sw-scroll">
-        {shown.length === 0 ? (
-          <EmptyState icon={CheckCircle2} title="Nothing here right now">
-            Loops in this state graduate to the Log as they close.
-          </EmptyState>
-        ) : (
-          <ul className="sw-group" style={{ listStyle: "none", margin: "14px 0 0", padding: 0 }}>
-            {shown.map((l) => <LoopRow key={l.id} l={l} onOpen={onOpen} />)}
-          </ul>
-        )}
-      </div>
-    </>
+    <div className="sw-scroll">
+      <PageHead title="Carrying" sub="Every open loop you're carrying — owner, counterparty, state, and age.">
+        <div className="sw-seg" role="group" aria-label="Filter loops">
+          {segs.map(([k, l]) => (
+            <button key={k} aria-pressed={seg === k} onClick={() => setSeg(k)}>
+              {l}<span className="sw-seg-n">{count(k)}</span>
+            </button>
+          ))}
+        </div>
+      </PageHead>
+      {shown.length === 0 ? (
+        <EmptyState icon={CheckCircle2} title="Nothing here right now">
+          Loops in this state graduate to the Log as they close.
+        </EmptyState>
+      ) : (
+        <ul className="sw-group" style={{ listStyle: "none", margin: "6px 0 0", padding: 0 }}>
+          {shown.map((l) => <LoopRow key={l.id} l={l} onOpen={onOpen} />)}
+        </ul>
+      )}
+    </div>
   );
 }
 

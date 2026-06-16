@@ -728,3 +728,111 @@ export const SEED_NOTIFICATIONS = [
     title: "Dmitri replied on the firmware bump",
     body: "“this week” — the thermal mitigation is unblocked." },
 ];
+
+/* =============================== clusters ================================= */
+/* Clusters are the home: hand-assembled or model-generated groupings of the
+   Objects above (loops, people, notes, roadmap, meetings). An auto-cluster
+   carries a confidence and must be reviewable — a wrong cluster mis-scopes the
+   model, which is worse than no cluster. `glyph` resolves to an icon in the view
+   so this stays icon-import-free. */
+export const CLUSTER_KIND = {
+  project:   { label: "Project" },
+  topic:     { label: "Topic" },
+  workgroup: { label: "Workgroup" },
+  team:      { label: "Team" },
+};
+
+export const SEED_CLUSTERS = [
+  { id: "cl-capture", name: "Capture pipeline GA", kind: "project", glyph: "boxes",
+    accent: "#0a6dff", pinned: true, auto: false,
+    summary: "The Q3 GA push — the production fire, the codec slip, and the thermal fix all feed it.",
+    activity: "12m",
+    loops: ["lp-fire", "lp-codec", "lp-rig", "lp-vp"],
+    people: ["priya", "dmitri", "marcus"],
+    notes: ["n-ga", "n-thermal", "n-codec", "n-standup"],
+    roadmap: ["rm-ga", "rm-codec", "rm-thermal"],
+    meetings: ["mt-standup", "mt-platform"],
+    artifactList: [
+      { kind: "Brief", title: "Q3 GA risk brief", when: "12m" },
+      { kind: "Incident", title: "IC-204 · frame corruption", when: "2h" },
+      { kind: "Order", title: "Thermal pad order — HW-OPS", when: "1d" },
+    ] },
+
+  { id: "cl-rigs", name: "M-series test rigs", kind: "topic", glyph: "cpu",
+    accent: "#1d9e75", pinned: false, auto: true, confidence: 93,
+    summary: "Hardware track: the thermal pads, the firmware bump, and the rig spec.",
+    activity: "3h",
+    loops: ["lp-rig", "lp-firmware"],
+    people: ["priya", "dmitri"],
+    notes: ["n-rigspec", "n-thermal", "n-padstd"],
+    roadmap: ["rm-thermal", "rm-firmware"],
+    meetings: [],
+    artifactList: [{ kind: "Page", title: "Rig thermal runbook", when: "3h" }] },
+
+  { id: "cl-codec", name: "Codec licensing", kind: "workgroup", glyph: "scale",
+    accent: "#b06a00", pinned: false, auto: true, confidence: 61,
+    summary: "Can the third-party codec actually ship? Marcus, Sam, and Legal — still unresolved.",
+    activity: "1d",
+    loops: ["lp-codec", "lp-legal"],
+    people: ["marcus", "sam", "legal"],
+    notes: ["n-codec"],
+    roadmap: ["rm-codec", "rm-license"],
+    meetings: [],
+    artifactList: [] },
+
+  { id: "cl-budget", name: "Studio budget — H2", kind: "project", glyph: "banknote",
+    accent: "#1d7a3f", pinned: false, auto: false,
+    summary: "Two more test rigs, capex stalled with Finance. Dana holds the approval.",
+    activity: "5h",
+    loops: ["lp-budget", "lp-vendor"],
+    people: ["dana", "priya"],
+    notes: ["n-budget", "n-rigspec"],
+    roadmap: [],
+    meetings: [],
+    artifactList: [{ kind: "Deck", title: "H2 capex justification", when: "5h" }] },
+
+  { id: "cl-roadmap", name: "Q3 roadmap", kind: "topic", glyph: "map",
+    accent: "#7b5cff", pinned: false, auto: false,
+    summary: "Every committed date and what's quietly drifting under it.",
+    activity: "2h",
+    loops: ["lp-codec", "lp-vp", "lp-firmware"],
+    people: ["priya", "marcus", "raj"],
+    notes: ["n-ga"],
+    roadmap: ["rm-ga", "rm-codec", "rm-thermal", "rm-firmware", "rm-dash", "rm-license"],
+    meetings: [],
+    artifactList: [
+      { kind: "Plan", title: "GA re-sequence proposal", when: "2h" },
+      { kind: "Status", title: "Roadmap status → leadership", when: "1d" },
+    ] },
+
+  { id: "cl-platform", name: "Platform team", kind: "team", glyph: "users",
+    accent: "#5a5ad6", pinned: false, auto: true, confidence: 88,
+    summary: "Dmitri, Marcus, and Lena — firmware, the codec call, and the design retro.",
+    activity: "4h",
+    loops: ["lp-bench", "lp-firmware", "lp-audio"],
+    people: ["dmitri", "marcus", "lena"],
+    notes: ["n-dmitri", "n-marcus", "n-retro"],
+    roadmap: ["rm-firmware"],
+    meetings: ["mt-platform", "mt-retro"],
+    artifactList: [] },
+];
+
+/* Resolve a cluster's member refs against live data + compute glanceable stats.
+   `needsReview` gates a low-confidence auto-cluster on the board and in detail. */
+export function clusterStats(cl, { loops = [], vault = [] } = {}) {
+  const memberLoops = cl.loops.map((id) => loops.find((l) => l.id === id)).filter(Boolean);
+  const memberNotes = cl.notes.map((id) => vault.find((v) => v.id === id)).filter(Boolean);
+  const artifacts = (cl.artifactList || []).length;
+  return {
+    memberLoops, memberNotes,
+    openLoops: memberLoops.length,
+    hasFire: memberLoops.some((l) => l.type === "fire" || l.interrupt),
+    people: cl.people.length,
+    notes: memberNotes.length,
+    roadmap: (cl.roadmap || []).length,
+    meetings: (cl.meetings || []).length,
+    artifacts,
+    total: memberLoops.length + cl.people.length + memberNotes.length + (cl.roadmap || []).length + (cl.meetings || []).length,
+    needsReview: !!cl.auto && (cl.confidence ?? 100) < 70,
+  };
+}

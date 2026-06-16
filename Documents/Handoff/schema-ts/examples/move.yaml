@@ -1,0 +1,33 @@
+id: mv_thermal
+type: move
+title: "Order the thermal pads Priya needs for the test rigs"
+provenance:
+  source: model
+  author: "steward"
+createdAt: "2026-06-13T16:25:00Z"
+updatedAt: "2026-06-13T16:25:00Z"
+refs:
+  - { rel: contains, slot: step, to: sl_priya }
+  - { rel: relates, predicate: about, to: cl_capture }
+body:
+  moveType: errand
+  status: proposed
+  confidence: 0.84
+  spine:
+    - node: observe
+      role: enter
+      title: "Flagged in standup, confirmed in Slack"
+      contains: [sl_priya]
+      status: settled
+      confidence: 0.94
+    - node: retrieve
+      role: middle
+      title: "Found the fix and two sourcing options"
+      status: edge
+      confidence: 0.71
+    - node: create
+      role: exit
+      title: "File the order as a Jira ticket"
+      produces: jr_order
+      gate: { kind: write, audienceStakes: peer }
+      status: pending

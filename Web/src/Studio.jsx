@@ -230,6 +230,7 @@ export default function Studio({ seed, model = "claude-sonnet-4-6", onCrystalliz
   // Seed from a Desk Move handed off into Studio.
   useEffect(() => {
     if (!seed) return;
+    if (seed.ask) return; // contextual ask from another screen — handled by the auto-run effect below
     const recap = (seed.nodes || []).map((n) => ({ kind: "node", id: "seed-" + n.id, node: n, status: "settled" }));
     const intro = { kind: "say", id: "seed-intro",
       text: `Resuming **${seed.title}**. Where it stands: ${seed.line} What do you want to adjust or push forward?` };
@@ -339,17 +340,31 @@ export default function Studio({ seed, model = "claude-sonnet-4-6", onCrystalliz
   }, [handleEvent]);
 
   /* ---- user actions ---- */
-  const submit = (override) => {
+  const submit = (override, opts) => {
     const text = (typeof override === "string" ? override : input).trim();
     if (!text || streaming || pending) return;
     if (typeof override !== "string") setInput("");
     setNotice(null); setError(null);
     setRows((prev) => [...prev, { kind: "user", id: nextId(), text }]);
-    transcriptRef.current = [...transcriptRef.current, { role: "user", text }];
+    // The visible bubble is the plain question; the model sees the screen context
+    // prepended (so an ask from any screen is grounded in that screen's data).
+    const sent = opts && opts.contextPrefix ? opts.contextPrefix + text : text;
+    transcriptRef.current = [...transcriptRef.current, { role: "user", text: sent }];
     scrollDown();
     if (mode === "sim") { simSegRef.current = 0; playSim(0); }
     else runLive();
   };
+
+  // A contextual ask handed in from another screen: auto-run the seeded question
+  // once, grounded in that screen's data.
+  const askedRef = useRef(false);
+  useEffect(() => {
+    if (seed && seed.ask && seed.question && !askedRef.current) {
+      askedRef.current = true;
+      submit(seed.question, { contextPrefix: `[Context — the user is looking at ${seed.scopeLabel || "Steward"}: ${seed.contextLine || ""} Answer grounded in this; reach for the vault and sources as needed.]\n\n` });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const startSim = () => {
     setMode("sim"); setNotice(null); setError(null);

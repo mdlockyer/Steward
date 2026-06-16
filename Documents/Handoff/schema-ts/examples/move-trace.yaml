@@ -1,0 +1,20 @@
+id: mt_001
+type: move.trace
+title: "Trace: what produced Jira HW-1182"
+provenance:
+  source: model
+  author: "steward-overnight"
+createdAt: "2026-06-14T03:00:00Z"
+updatedAt: "2026-06-14T03:00:00Z"
+refs:
+  - { rel: relates, predicate: explains, to: jr_order }
+body:
+  exit: jr_order
+  confidence: 0.66
+  reviewed: false
+  explanation: "Ticket traces back to Priya's Slack flag via the #hw-platform thread."
+  evidence: [sl_priya, nt_codec]
+  reconstructed:
+    enter: sl_priya
+    middle: [nt_codec]
+    moveType: errand

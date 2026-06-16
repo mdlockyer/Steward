@@ -1,0 +1,15 @@
+id: cl_boardprep
+type: cluster.artifact
+title: "Board deck prep — Monday"
+provenance:
+  source: model
+  author: "steward"
+createdAt: "2026-06-13T17:00:00Z"
+updatedAt: "2026-06-13T17:00:00Z"
+refs:
+  - { rel: relates, predicate: produced-from, to: cl_capture }
+  - { rel: contains, slot: member, to: nt_codec }
+body:
+  kind: ad-hoc
+  producedBy: as_capture
+  summary: "Artifacts produced from the Capture Pipeline cluster for Monday's board deck."

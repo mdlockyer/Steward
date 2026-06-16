@@ -1,0 +1,23 @@
+id: nt_codec
+type: note
+title: "Codec decision"
+storage: pointer
+provenance:
+  source: obsidian
+  uri: "Decisions/Codec decision.md"
+  author: "mlockyer"
+createdAt: "2026-06-11T18:00:00Z"
+updatedAt: "2026-06-11T18:00:00Z"
+body:
+  path: "Decisions/Codec decision.md"
+  mime: "text/markdown"
+  raw: "Leaning AV1, pending [[Marcus Chen]]'s final call. Blocks [[Capture GA plan]]."
+  status: "leaning"
+  frontmatter:
+    status: "leaning"
+    owner: "Marcus Chen"
+  wikilinks: ["Marcus Chen", "Capture GA plan"]
+  tags: ["decision", "codec", "open"]
+  backlinks: []
+refs:
+  - { rel: relates, predicate: about, to: cl_capture }

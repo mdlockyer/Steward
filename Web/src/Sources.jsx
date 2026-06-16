@@ -4,7 +4,7 @@ import {
   SEED_SOURCES, PEOPLE_SOURCE, FINANCE_SOURCE, BUDGET_LINES, PEOPLE,
   VAULT_INDEX, EMBEDDING_PROVIDERS,
 } from "./data.js";
-import { Avatar } from "./components.jsx";
+import { Avatar, PageHead } from "./components.jsx";
 
 /* ============================================================================
    SOURCES — keeps its job (the MCP mesh + the swappable reasoning engine) and
@@ -23,8 +23,9 @@ export default function Sources({ memory }) {
   return (
     <>
       <div className="sw-scroll">
+        <PageHead title="Sources" sub="What Steward listens to over MCP — reads freely, every write stays gated." />
         {/* connected sources */}
-        <div className="sw-group" style={{ marginTop: 14 }}>
+        <div className="sw-group" style={{ marginTop: 6 }}>
           {SEED_SOURCES.map((s) => {
             const cm = CONN[s.conn]; const Ic = s.ic;
             return (

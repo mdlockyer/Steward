@@ -2,5 +2,4 @@
 export * from "./base";
 export * from "./registry";
 export * from "./validate";
-export * from "./selfcheck";
 import "./types"; // register all core types
